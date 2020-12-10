@@ -481,9 +481,9 @@ def main(args):
             for i in range(2):
 
                 if int(category) < 30:
-                    plot.add_legend(width=0.38, height=0.30)
+                    plot.add_legend(width=0.50, height=0.30)
                 else:
-                    plot.add_legend(width=0.34, height=0.30)
+                    plot.add_legend(width=0.50, height=0.30)
                 # plot.add_legend(width=0.6, height=0.15)
                 for process in legend_bkg_processes:
                     plot.legend(i).add_entry(

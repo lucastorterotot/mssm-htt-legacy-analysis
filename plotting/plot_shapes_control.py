@@ -483,7 +483,7 @@ def main(info):
         os.mkdir("%s_plots_%s"%(args.era,postfix))
     if not os.path.exists("%s_plots_%s/%s"%(args.era,postfix,channel)):
         os.mkdir("%s_plots_%s/%s"%(args.era,postfix,channel))
-    print "Trying to save the created plot"
+    print("Trying to save the created plot")
     plot.save("%s_plots_%s/%s/%s_%s_%s.%s" % (args.era, postfix, channel, args.era, channel, variable, "pdf"))
     plot.save("%s_plots_%s/%s/%s_%s_%s.%s" % (args.era, postfix, channel, args.era, channel, variable, "png"))
 

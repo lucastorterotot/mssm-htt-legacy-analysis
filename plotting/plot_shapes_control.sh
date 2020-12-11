@@ -1,5 +1,5 @@
-source utils/setup_cvmfs_sft.sh
-source utils/setup_python.sh
+# source utils/setup_cvmfs_sft.sh
+# source utils/setup_python.sh
 
 ERA=$1
 INPUT=$2

@@ -242,6 +242,8 @@ def main(args):
         for category in channel_categories[channel]:
             if args.control_region and category != "1":
                 continue
+            if int(category) > 30 and not args.model_independent:
+                continue
             rootfile = rootfile_parser.Rootfile_parser(args.input)
             legend_bkg_processes = copy.deepcopy(bkg_processes)
             legend_bkg_processes.reverse()

@@ -380,7 +380,16 @@ def main(args):
                 max(1.3 * plot.subplot(0).get_hist("total_bkg").GetMaximum(),
                     split_dict[channel] * 2))
 
-            plot.subplot(2).setYlims(0.75, 1.8)
+            plot.subplot(0).setYlims(1.e-3, max(1e5 * plot.subplot(0).get_hist("total_bkg").GetMaximum(), split_dict[channel] * 2))
+            plot.subplot(0).setLogY()
+            width=.3
+            plot.subplot(2).setYlims(1-width, 1+width)#(0.75, 1.8)
+            if (channel == "tt" and int(category) == 17) or (channel in ["et", "mt"] and int(category) == 18):
+                if 1+width < 2:
+                    plot.subplot(2).setYlims(1-width, 2)
+            elif (channel == "tt" and int(category) == 16):
+                if 1+width < 1.5:
+                    plot.subplot(2).setYlims(1-width, 1.5)
 
             if args.linear != True:
                 # plot.subplot(1).setYlims(1.e-4, split_dict[channel])

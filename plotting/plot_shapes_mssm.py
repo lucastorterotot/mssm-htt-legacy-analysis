@@ -267,19 +267,24 @@ def main(args):
                     ggH_hist = rootfile.get(era, channel, category, "ggh_t").Clone()
                     ggH_hist.Add(rootfile.get(era, channel, category, "ggh_i"))
                     ggH_hist.Add(rootfile.get(era, channel, category, "ggh_b"))
+                    ggH_hist.Add(rootfile.get(era, channel, category, "TotalBkg"))
                     plot.subplot(i).add_hist(
                         ggH_hist, "ggH")
                     plot.subplot(i).add_hist(
                         ggH_hist, "ggH_top")
+                    bbH_hist = rootfile.get(era, channel, category, "bbh").Clone()
+                    bbH_hist.Add(rootfile.get(era, channel, category, "TotalBkg"))
                     plot.subplot(i).add_hist(
-                        rootfile.get(era, channel, category, "bbh"), "bbH")
+                        bbH_hist, "bbH")
                     plot.subplot(i).add_hist(
-                        rootfile.get(era, channel, category, "bbh"), "bbH_top")
+                        bbH_hist, "bbH_top")
                 else:
+                    mssm_sig_hist = rootfile.get(era, channel, category, "TotalSig").Clone()
+                    mssm_sig_hist.Add(rootfile.get(era, channel, category, "TotalBkg"))
                     plot.subplot(i).add_hist(
-                        rootfile.get(era, channel, category, "TotalSig"), "mssm_sig")
+                        mssm_sig_hist, "mssm_sig")
                     plot.subplot(i).add_hist(
-                        rootfile.get(era, channel, category, "TotalSig"), "mssm_sig_top")
+                        mssm_sig_hist, "mssm_sig_top")
 
             # get observed data and total background histograms
             plot.add_hist(
@@ -313,8 +318,8 @@ def main(args):
             if args.model_independent:
                 bkg_ggH = plot.subplot(2).get_hist("ggH")
                 bkg_bbH = plot.subplot(2).get_hist("bbH")
-                bkg_ggH.Add(plot.subplot(2).get_hist("total_bkg"))
-                bkg_bbH.Add(plot.subplot(2).get_hist("total_bkg"))
+                # bkg_ggH.Add(plot.subplot(2).get_hist("total_bkg"))
+                # bkg_bbH.Add(plot.subplot(2).get_hist("total_bkg"))
                 plot.subplot(2).add_hist(bkg_ggH, "bkg_ggH")
                 plot.subplot(2).add_hist(bkg_ggH, "bkg_ggH_top")
                 plot.subplot(2).add_hist(bkg_bbH, "bkg_bbH")
@@ -343,7 +348,7 @@ def main(args):
                 ], "total_bkg")
             else:
                 bkg_sig = plot.subplot(2).get_hist("mssm_sig")
-                bkg_sig.Add(plot.subplot(2).get_hist("total_bkg"))
+                # bkg_sig.Add(plot.subplot(2).get_hist("total_bkg"))
                 plot.subplot(2).add_hist(bkg_sig, "bkg_mssm_sig")
                 plot.subplot(2).add_hist(bkg_sig, "bkg_mssm_sig_top")
                 plot.subplot(2).setGraphStyle(

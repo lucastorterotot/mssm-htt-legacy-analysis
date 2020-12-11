@@ -292,7 +292,6 @@ def main(args):
             plot.add_hist(
                 rootfile.get(era, channel, category, "TotalBkg"), "total_bkg")
 
-            plot.subplot(0).setGraphStyle("data_obs", "e0")
             if args.model_independent:
                 plot.subplot(0 if args.linear else 1).setGraphStyle(
                     "ggH", "hist", linecolor=styles.color_dict["ggH"], linewidth=3)
@@ -560,6 +559,8 @@ def main(args):
                 "%s, %s" % (channel_dict[channel], category_dict[channel][category]),
                 begin_left=posChannelCategoryLabelLeft)
 
+            plot.subplot(0).setGraphStyle("data_obs", "e0", markersize=.5)
+            plot.subplot(2).setGraphStyle("data_obs", "e0", markersize=.5)
             # save plot
             postfix = "prefit" if "prefit" in args.input else "postfit" if "postfit" in args.input else "undefined"
             plot.save("%s/%s_%s_%s_%s.%s" % (args.output_dir, args.era, channel, args.control_variable if args.control_variable is not None else category,

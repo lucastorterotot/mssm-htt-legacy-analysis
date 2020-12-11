@@ -447,6 +447,8 @@ def main(args):
                     procs_to_draw = ["stack", "total_bkg", "ggH", "ggH_top", "bbH", "bbH_top"] if args.linear else ["stack", "total_bkg"]
                 else:
                     procs_to_draw = ["stack", "total_bkg", "mssm_sig", "mssm_sig_top"] if args.linear else ["stack", "total_bkg"]
+            if not "data_obs" in procs_to_draw:
+                procs_to_draw.append("data_obs")
             plot.subplot(0).Draw(procs_to_draw)
             if args.linear != True:
                 # plot.subplot(1).Draw([
@@ -464,12 +466,12 @@ def main(args):
                         plot.subplot(1).Draw([
                             "stack", "total_bkg", "ggH", "bbH",
                             "ggH_top", "bbH_top",
-                            # "data_obs"
+                            "data_obs"
                         ])
                     else:
                         plot.subplot(1).Draw([
                             "stack", "total_bkg", "mssm_sig", "mssm_sig_top",
-                            # "data_obs"
+                            "data_obs"
                         ])
             if category == "1" and args.control_region:
                 plot.subplot(2).Draw([
@@ -481,12 +483,12 @@ def main(args):
                     plot.subplot(2).Draw([
                         "total_bkg", "bkg_ggH", "bkg_bbH",
                         "bkg_ggH_top", "bkg_bbH_top",
-                        # "data_obs"
+                        "data_obs"
                     ])
                 else:
                     plot.subplot(2).Draw([
                         "total_bkg", "bkg_mssm_sig", "bkg_mssm_sig_top",
-                        # "data_obs"
+                        "data_obs"
                     ])
 
             # create legends

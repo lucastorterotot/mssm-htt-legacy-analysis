@@ -496,9 +496,9 @@ def main(args):
             for i in range(2):
 
                 if int(category) < 30:
-                    plot.add_legend(width=0.50, height=0.30)
+                    plot.add_legend(width=0.50, height=0.20)
                 else:
-                    plot.add_legend(width=0.50, height=0.30)
+                    plot.add_legend(width=0.50, height=0.25)
                 # plot.add_legend(width=0.6, height=0.15)
                 for process in legend_bkg_processes:
                     plot.legend(i).add_entry(
@@ -509,10 +509,10 @@ def main(args):
                     pass
                 else:
                     if args.model_independent:
-                        plot.legend(i).add_entry(0 if args.linear else 1, "ggH%s" % suffix[i], "#splitline{ggH}{(m_{H} = 2600 GeV)}", 'l')
-                        plot.legend(i).add_entry(0 if args.linear else 1, "bbH%s" % suffix[i], "#splitline{bbH}{(m_{H} = 2600 GeV)}", 'l')
+                        plot.legend(i).add_entry(0 if args.linear else 1, "ggH%s" % suffix[i], "#splitline{ggH+bkg.}{(m_{H} = 400 GeV)}", 'l')
+                        plot.legend(i).add_entry(0 if args.linear else 1, "bbH%s" % suffix[i], "#splitline{bbH+bkg.}{(m_{H} = 400 GeV)}", 'l')
                     else:
-                        plot.legend(i).add_entry(0 if args.linear else 1, "mssm_sig%s" % suffix[i], "#splitline{H #rightarrow #tau#tau}{#splitline{(m_{A}=1200 GeV,}{ tan #beta = 10)}}", 'l')
+                        plot.legend(i).add_entry(0 if args.linear else 1, "mssm_sig%s" % suffix[i], "#splitline{h,H,A #rightarrow #tau#tau}{(m_{H} = 400 GeV)}", 'l')
                 plot.legend(i).add_entry(0, "data_obs", "Data", 'PE')
                 plot.legend(i).setNColumns(2)
             plot.legend(0).Draw()
@@ -549,9 +549,9 @@ def main(args):
                                                      "H+bkg.", 'l')
                 plot.legend(i + 2).add_entry(0, "total_bkg", "Bkg. unc.", 'f')
                 plot.legend(i + 2).setNColumns(3)
-            plot.legend(2).Draw()
-            plot.legend(3).setAlpha(0.0)
-            plot.legend(3).Draw()
+            # plot.legend(2).Draw()
+            # plot.legend(3).setAlpha(0.0)
+            # plot.legend(3).Draw()
 
             # draw additional labels
             # plot.DrawCMS()

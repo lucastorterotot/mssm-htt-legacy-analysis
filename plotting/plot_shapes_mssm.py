@@ -642,8 +642,11 @@ def main(args):
                 raise Exception
 
             posChannelCategoryLabelLeft = None
+            # plot.DrawChannelCategoryLabel(
+            #     "%s, %s" % (channel_dict[channel], category_dict[channel][category]),
+            #     begin_left=posChannelCategoryLabelLeft)
             plot.DrawChannelCategoryLabel(
-                "%s, %s" % (channel_dict[channel], category_dict[channel][category]),
+                "%s, %s" % (str(channel), str(int(category))),
                 begin_left=posChannelCategoryLabelLeft)
 
             plot.subplot(0).setGraphStyle("data_obs", "e0", markersize=.5)

@@ -651,6 +651,10 @@ def main(args):
 
             plot.subplot(0).setGraphStyle("data_obs", "e0", markersize=.5)
             plot.subplot(2).setGraphStyle("data_obs", "e0", markersize=.5)
+            ax=plot.subplot(2)._hists['total_bkg'][0].GetXaxis()
+            ax.SetMoreLogLabels()
+            ax.SetNoExponent()
+
             # save plot
             postfix = "prefit" if "prefit" in args.input else "postfit" if "postfit" in args.input else "undefined"
             plot.save("%s/%s_%s_%s_%s%s%s%s.%s" % (args.output_dir, args.era, channel, args.control_variable if args.control_variable is not None else category,

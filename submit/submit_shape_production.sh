@@ -6,6 +6,7 @@ PROCESSES=$3
 SUBMIT_MODE=$4
 TAG=$5
 CONTROL=$6
+USE_ML=$7
 
 [[ ! -z $1 && ! -z $2 && ! -z $3 && ! -z $4  && ! -z $5 ]] || ( echo "[ERROR] Number of given parameters is too small."; exit 1 )
 [[ ! -z $6 ]] || CONTROL=0
@@ -13,6 +14,14 @@ CONTROL_ARG=""
 if [[ $CONTROL == 1 ]]
 then
     CONTROL_ARG="--control-plots"
+fi
+[[ ! -z $7 ]] || USE_ML=0
+USE_ML_ARG=""
+ML_prefix=""
+if [[ $USE_ML == 1 ]]
+then
+    USE_ML_ARG="--use_ML"
+    ML_prefix="ML_"
 fi
 
 source utils/setup_susy_samples.sh $ERA
@@ -62,7 +71,7 @@ then
 elif [[ "$SUBMIT_MODE" == "singlegraph" ]]
 then
     echo "[INFO] Preparing graph for processes $PROCESSES for submission..."
-    OUTPUT=output/submit_files/${ERA}-${CHANNEL}-${PROCESSES}-${CONTROL}-${TAG}
+    OUTPUT=output/submit_files/${ERA}-${CHANNEL}-${PROCESSES}-${CONTROL}-${USE_ML}-${TAG}
     [[ ! -d $OUTPUT ]] && mkdir -p $OUTPUT
     python shapes/produce_shapes.py --channels $CHANNEL \
         			    --output-file dummy.root \
@@ -76,10 +85,10 @@ then
                                     --process-selection $PROCESSES \
                                     --only-create-graphs \
                                     --graph-dir $OUTPUT \
-                                    $CONTROL_ARG
+                                    $CONTROL_ARG $USE_ML_ARG
     # Set output graph file name produced during graph creation.
-    GRAPH_FILE=${OUTPUT}/analysis_unit_graphs-${ERA}-${CHANNEL}-${PROCESSES}.pkl
-    [[ $CONTROL == 1 ]] && GRAPH_FILE=${OUTPUT}/control_unit_graphs-${ERA}-${CHANNEL}-${PROCESSES}.pkl
+    GRAPH_FILE=${OUTPUT}/${ML_prefix}analysis_unit_graphs-${ERA}-${CHANNEL}-${PROCESSES}.pkl
+    [[ $CONTROL == 1 ]] && GRAPH_FILE=${OUTPUT}/${ML_prefix}control_unit_graphs-${ERA}-${CHANNEL}-${PROCESSES}.pkl
     # Prepare the jdl file for single core jobs.
     echo "[INFO] Creating the logging direcory for the jobs..."
     GF_NAME=$(basename $GRAPH_FILE)

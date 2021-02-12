@@ -14,7 +14,7 @@ from config.shapes.file_names import files
 from config.shapes.process_selection import DY_process_selection, TT_process_selection, VV_process_selection, W_process_selection, ZTT_process_selection, ZL_process_selection, ZJ_process_selection, TTT_process_selection, TTL_process_selection, TTJ_process_selection, VVT_process_selection, VVJ_process_selection, VVL_process_selection, ggH125_process_selection, qqH125_process_selection, ZTT_embedded_process_selection, ZH_process_selection, WH_process_selection, ggHWW_process_selection, qqHWW_process_selection, ZHWW_process_selection, WHWW_process_selection, ttH_process_selection
 from config.shapes.process_selection import SUSYbbH_process_selection, SUSYggH_process_selection, SUSYggH_Ai_contribution_selection, SUSYggH_At_contribution_selection, SUSYggH_Ab_contribution_selection, SUSYggH_Hi_contribution_selection, SUSYggH_Ht_contribution_selection, SUSYggH_Hb_contribution_selection, SUSYggH_hi_contribution_selection, SUSYggH_ht_contribution_selection, SUSYggH_hb_contribution_selection
 # from config.shapes.category_selection import categorization
-from config.shapes.category_selection import categorization
+from config.shapes.category_selection import categorization, ML_categorization
 # Variations for estimation of fake processes
 from config.shapes.variations import same_sign, same_sign_em, anti_iso_lt, anti_iso_tt, anti_iso_tt_mcl, abcd_method
 # Energy scale uncertainties
@@ -171,6 +171,12 @@ def parse_arguments():
         action="store_true",
         help="Enables check for double actions during booking. Takes long for all variations."
     )
+
+    parser.add_argument(
+        "--use_ML",
+        action="store_true",
+        help="Enables the use of the ML Higgs mass predictions instead of mTtot."
+    )
     return parser.parse_args()
 
 
@@ -230,126 +236,129 @@ def main(args):
         return datasets
 
     def get_analysis_units(channel, era, datasets, nn_shapes=False):
+        categorization_to_use = categorization
+        if args.use_ML:
+            categorization_to_use = ML_categorization
         return {
                 "data" : [Unit(
                             datasets["data"], [
                                 channel_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "emb": [Unit(
                             datasets["EMB"], [
                                 channel_selection(channel, era),
                                 ZTT_embedded_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "ztt" : [Unit(
                             datasets["DY"], [
                                 channel_selection(channel, era),
                                 DY_process_selection(channel, era),
                                 ZTT_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "zl" :  [Unit(
                             datasets["DY"], [
                                 channel_selection(channel, era),
                                 DY_process_selection(channel, era),
                                 ZL_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "zj" :  [Unit(
                             datasets["DY"], [
                                 channel_selection(channel, era),
                                 DY_process_selection(channel, era),
                                 ZJ_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "ttt" : [Unit(
                             datasets["TT"], [
                                 channel_selection(channel, era),
                                 TT_process_selection(channel, era),
                                 TTT_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "ttl" : [Unit(
                             datasets["TT"], [
                                 channel_selection(channel, era),
                                 TT_process_selection(channel, era),
                                 TTL_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "ttj" : [Unit(
                             datasets["TT"], [
                                 channel_selection(channel, era),
                                 TT_process_selection(channel, era),
                                 TTJ_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "vvt" : [Unit(
                             datasets["VV"], [
                                 channel_selection(channel, era),
                                 VV_process_selection(channel, era),
                                 VVT_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "vvl" : [Unit(
                             datasets["VV"], [
                                 channel_selection(channel, era),
                                 VV_process_selection(channel, era),
                                 VVL_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "vvj" : [Unit(
                             datasets["VV"], [
                                 channel_selection(channel, era),
                                 VV_process_selection(channel, era),
                                 VVJ_process_selection(channel),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "w"   : [Unit(
                             datasets["W"], [
                                 channel_selection(channel, era),
                                 W_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "ggh" : [Unit(
                             datasets["ggH"], [
                                 channel_selection(channel, era),
                                 ggH125_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "qqh" : [Unit(
                             datasets["qqH"], [
                                 channel_selection(channel, era),
                                 qqH125_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "wh"  : [Unit(
                             datasets["WH"], [
                                 channel_selection(channel, era),
                                 WH_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "zh"  : [Unit(
                             datasets["ZH"], [
                                 channel_selection(channel, era),
                                 ZH_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "tth"  : [Unit(
                             datasets["ttH"], [
                                 channel_selection(channel, era),
                                 ttH_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "gghww"  : [Unit(
                             datasets["ggHWW"], [
                                 channel_selection(channel, era),
                                 ggHWW_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "qqhww"  : [Unit(
                             datasets["qqHWW"], [
                                 channel_selection(channel, era),
                                 qqHWW_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "zhww"  : [Unit(
                             datasets["ZHWW"], [
                                 channel_selection(channel, era),
                                 ZHWW_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 "whww"  : [Unit(
                             datasets["WHWW"], [
                                 channel_selection(channel, era),
                                 WHWW_process_selection(channel, era),
-                                category_selection], actions) for category_selection, actions in categorization[channel]],
+                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]],
                 **{"ggh{}".format(mass): [Unit(
                                             datasets["susyggH_{}".format(mass)], [
                                                 channel_selection(channel, era),
                                                 SUSYggH_process_selection(channel, era),
                                                 contribution_selection(channel),
-                                                category_selection], actions) for category_selection, actions in categorization[channel]
+                                                category_selection], actions) for category_selection, actions in categorization_to_use[channel]
                                                                                                for contribution_selection in [
                                                                                                                               SUSYggH_Ai_contribution_selection,
                                                                                                                               SUSYggH_At_contribution_selection,
@@ -365,7 +374,7 @@ def main(args):
                                                 datasets["susybbH_{}".format(mass)], [
                                                     channel_selection(channel, era),
                                                     SUSYbbH_process_selection(channel, era),
-                                                    category_selection], actions) for category_selection, actions in categorization[channel]]
+                                                    category_selection], actions) for category_selection, actions in categorization_to_use[channel]]
                                             for mass in susy_masses[era]["bbH"]},
         }
 
@@ -608,6 +617,8 @@ def main(args):
             graph_file_name = "control_unit_graphs-{}-{}-{}.pkl".format(args.era, ",".join(args.channels), ",".join(sorted(procS)))
         else:
             graph_file_name = "analysis_unit_graphs-{}-{}-{}.pkl".format(args.era, ",".join(args.channels), ",".join(sorted(procS)))
+        if args.use_ML:
+            graph_file_name = "ML_{}".format(graph_file_name)
         if args.graph_dir is not None:
             graph_file = os.path.join(args.graph_dir, graph_file_name)
         else:

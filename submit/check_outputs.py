@@ -46,8 +46,7 @@ def check_output_files(era, channel, process_string, control_arg):
 
 def main(args):
     proc_dict = {
-            "bkg": ["data,emb,ttj,ttl,ttt,vvj,vvl,vvt,w,zj,zl,ztt"],
-            "sm_signals" : ["ggh,gghww,qqh,qqhww,tth,wh,whww,zh,zhww"],
+            "bkg": ["data,emb,ttj,ttl,ttt,vvj,vvl,vvt,w,zj,zl,ztt,ggh,gghww,qqh,qqhww,tth,wh,whww,zh,zhww"],
             "mssm_bbh": [os.environ["BBH_SAMPLES_SPLIT{}".format(i)] for i in range(1,3)],
             "mssm_ggh": [os.environ["GGH_SAMPLES_SPLIT{}".format(i)] for i in range(1,4)],
     }

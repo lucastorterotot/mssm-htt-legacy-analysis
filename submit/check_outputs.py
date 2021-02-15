@@ -12,6 +12,11 @@ def parse_args():
     parser.add_argument("-t", "--tag", type=str, required=True,
                         help="Given tag of the submission.")
     parser.add_argument("--control", action="store_true", help="Check for control plots")
+    parser.add_argument(
+        "--use_ML",
+        action="store_true",
+        help="Enables the use of the ML Higgs mass predictions instead of mTtot."
+    )
     return parser.parse_args()
 
 
@@ -26,7 +31,8 @@ def check_output_files(era, channel, process_string, control_arg):
                                 for fi in os.listdir(
                                     os.path.join(
                                                  "output/shapes",
-                                                 "{}_unit_graphs-{}-{}-{}".format(
+                                                 "{}{}_unit_graphs-{}-{}-{}".format(
+                                                     "ML_" if args.use_ML else "",
                                                      control_arg,
                                                      era,
                                                      channel,
@@ -60,8 +66,8 @@ def main(args):
                 # Sort proc string for correct matching
                 proc_str = ",".join(sorted(proc_str.split(",")))
                 with open(os.path.join("output/submit_files",
-                                       "{}-{}-{}-{}-{}".format(args.era, ch, proc_str, 1 if args.control else 0, args.tag),
-                                       "{}_unit_graphs-{}-{}-{}.pkl".format(c_arg, args.era, ch, proc_str)),
+                                       "{}-{}-{}-{}-{}-{}".format(args.era, ch, proc_str, 1 if args.control else 0, 1 if args.use_ML else 0, args.tag),
+                                       "{}{}_unit_graphs-{}-{}-{}.pkl".format("ML_" if args.use_ML else "", c_arg, args.era, ch, proc_str)),
                           "rb") as f:
                     num_graphs = len(pickle.load(f))
                 # Check number of output files.

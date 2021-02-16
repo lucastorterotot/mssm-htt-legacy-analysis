@@ -9,6 +9,12 @@ if [[ "$4" == 1 ]]
 then
     PREFIX="control"
 fi
+ML_PREFIX=""
+if [[ "$5" == 1 ]]
+then
+    ML_PREFIX="ML_"
+fi
+PREFIX=${ML_PREFIX}${PREFIX}
 
 # Load submit splits of susy samples.
 source utils/setup_susy_samples.sh $ERA

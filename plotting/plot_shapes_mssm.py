@@ -68,6 +68,9 @@ def parse_arguments():
     parser.add_argument("--blinded",
                         action="store_true",
                         help="Do not draw data.")
+    parser.add_argument("--ml_mass",
+                        action="store_true",
+                        help="Use if mTtot is replaced by the ML predictions.")
     return parser.parse_args()
 
 
@@ -189,6 +192,8 @@ def main(args):
                 },
 
         }
+    SM_cats = [v for v in range(30)]
+    BSM_cats = [v for v in range(30, 40)]
     if args.linear == True:
         split_value = 0
     else:
@@ -389,7 +394,7 @@ def main(args):
                 # plot.subplot(1).setYlims(1.e-4, split_dict[channel])
                 plot.subplot(1).setYlims(1.e-3, split_dict[channel])
                 plot.subplot(1).setLogY()
-                if int(category) > 30 or int(category) == 1:
+                if int(category) in BSM_cats:
                     plot.subplot(1).setLogX()
                 plot.subplot(1).setYlabel(
                     "")  # otherwise number labels are not drawn on axis
@@ -401,22 +406,26 @@ def main(args):
                     x_label = args.control_variable
                 plot.subplot(2).setXlabel(x_label)
             else:
-                if int(category) > 30 or int(category) == 1:
+                if int(category) in BSM_cats:
                     plot.subplot(2).setXlabel("m_{T}^{tot} (Puppi) [GeV]")
+                    if args.ml_mass:
+                        plot.subplot(2).setXlabel("ML predictions [GeV]")
                 else:
-                    plot.subplot(2).setXlabel("SVFit m_{#tau#tau} (Puppi) [GeV]")
+                    plot.subplot(2).setXlabel("NN score")
             if args.normalize_by_bin_width:
-                if int(category) > 30 or int(category) == 1:
+                if int(category) in BSM_cats:
                     plot.subplot(0).setYlabel("dN/dm_{T}^{tot} [1/GeV]")
+                    if args.ml_mass:
+                        plot.subplot(0).setYlabel("dN/d predictions [1/GeV]")
                 else:
-                    plot.subplot(0).setYlabel("dN/dm_{#tau#tau} [1/GeV]")
+                    plot.subplot(0).setYlabel("dN/d score")
             else:
                 plot.subplot(0).setYlabel("N_{events}")
 
             plot.subplot(2).setYlabel("")
 
 
-            if int(category) > 30 or int(category) == 1:
+            if int(category) in BSM_cats:
                 low_edge = max(10, rootfile.get(era, channel, category, "TotalSig").GetBinLowEdge(2))
                 plot.setXlims(low_edge, 3890)
                 plot.subplot(0).setLogX()

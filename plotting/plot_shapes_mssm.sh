@@ -34,10 +34,10 @@ do
     do
         ./plotting/plot_shapes_mssm.py -i $FILE -c $CHANNELS -e $ERA $OPTION $JETFAKES_ARG $EMBEDDING_ARG $ML_MASS_ARG --normalize-by-bin-width -o ${DIR}/${ERA}/cmb &
         ./plotting/plot_shapes_mssm.py -i $FILE -c $CHANNELS -e $ERA $OPTION $JETFAKES_ARG $EMBEDDING_ARG $ML_MASS_ARG --normalize-by-bin-width -o ${DIR}/${ERA}/cmb --linear &
-        ./plotting/plot_shapes_mssm.py -i $FILE -c $CHANNELS -e $ERA $OPTION $JETFAKES_ARG $EMBEDDING_ARG $ML_MASS_ARG --normalize-by-bin-width -o ${DIR}/${ERA}/cmb --linear --split &
+        #./plotting/plot_shapes_mssm.py -i $FILE -c $CHANNELS -e $ERA $OPTION $JETFAKES_ARG $EMBEDDING_ARG $ML_MASS_ARG --normalize-by-bin-width -o ${DIR}/${ERA}/cmb --linear --split &
         ./plotting/plot_shapes_mssm.py -i $FILE -c $CHANNELS -e $ERA $OPTION $JETFAKES_ARG $EMBEDDING_ARG $ML_MASS_ARG --normalize-by-bin-width -o ${DIR}/${ERA}/cmb --blinded &
         ./plotting/plot_shapes_mssm.py -i $FILE -c $CHANNELS -e $ERA $OPTION $JETFAKES_ARG $EMBEDDING_ARG $ML_MASS_ARG --normalize-by-bin-width -o ${DIR}/${ERA}/cmb --linear --blinded &
-        ./plotting/plot_shapes_mssm.py -i $FILE -c $CHANNELS -e $ERA $OPTION $JETFAKES_ARG $EMBEDDING_ARG $ML_MASS_ARG --normalize-by-bin-width -o ${DIR}/${ERA}/cmb --linear --split --blinded &
+        #./plotting/plot_shapes_mssm.py -i $FILE -c $CHANNELS -e $ERA $OPTION $JETFAKES_ARG $EMBEDDING_ARG $ML_MASS_ARG --normalize-by-bin-width -o ${DIR}/${ERA}/cmb --linear --split --blinded &
     done
     wait
 done

@@ -386,6 +386,8 @@ def main(args):
 
             y_factor_linear = 1.25
             y_max = 0
+            if channel == "em" and int(category) == 13:
+                y_factor_linear = 1.5
             for hist in ["total_bkg", "data_obs"]:
                 if plot.subplot(0).get_hist(hist).GetMaximum() > y_max:
                     y_max = plot.subplot(0).get_hist(hist).GetMaximum()
@@ -399,12 +401,12 @@ def main(args):
                 
             width=.3
             plot.subplot(2).setYlims(1-width, 1+width)#(0.75, 1.8)
-            if (channel == "tt" and int(category) == 17) or (channel in ["et", "mt"] and int(category) == 18):
-                if 1+width < 2:
-                    plot.subplot(2).setYlims(1-width, 2)
-            elif (channel == "tt" and int(category) == 16):
-                if 1+width < 1.5:
-                    plot.subplot(2).setYlims(1-width, 1.5)
+            # if (channel == "tt" and int(category) == 17) or (channel in ["et", "mt"] and int(category) == 18):
+            #     if 1+width < 2:
+            #         plot.subplot(2).setYlims(1-width, 2)
+            # elif (channel == "tt" and int(category) == 16):
+            #     if 1+width < 1.5:
+            #         plot.subplot(2).setYlims(1-width, 1.5)
 
             if args.linear and args.split:
                 # plot.subplot(1).setYlims(1.e-4, split_dict[channel])
@@ -443,7 +445,12 @@ def main(args):
 
             if int(category) in BSM_cats:
                 low_edge = max(10, rootfile.get(era, channel, category, "TotalSig").GetBinLowEdge(2))
-                plot.setXlims(low_edge, 3890)
+                #if channel == "em" and int(category) in [32, 33]:
+                #    low_edge = 70
+                #elif channel == "em" and int(category) in [34]:
+                #    low_edge = 80
+
+                plot.setXlims(low_edge, 3000)
                 plot.subplot(0).setLogX()
                 plot.subplot(2).setLogX()
 

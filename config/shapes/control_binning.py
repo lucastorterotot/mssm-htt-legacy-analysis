@@ -6,6 +6,8 @@ minimal_control_plot_set = [
     "pt_2",
     "eta_1",
     "eta_2",
+    "phi_1",
+    "phi_2",
     "m_vis",
     "m_sv_puppi",
     "pt_tt_puppi",
@@ -14,9 +16,16 @@ minimal_control_plot_set = [
     "jpt_2",
     "jeta_1",
     "jeta_2",
+    "jphi_1",
+    "jphi_2",
+    "jpt_r",
+    "jeta_r",
+    "jphi_r",
+    "Njet_r",
     "bpt_1",
     "bpt_2",
     "puppimet",
+    "puppimetphi",
     "DiTauDeltaR",
     "pZetaPuppiMissVis",
     "mt_1_puppi",
@@ -27,6 +36,9 @@ minimal_control_plot_set = [
     "jdeta",
     "dijetpt",
     "mjj",
+    "npv",
+    "mt_tot_puppi",
+    "ml_mass",
 ]
 
 
@@ -584,3 +596,23 @@ control_binning = {
     "beta_2": Histogram("beta_2", "beta_2", [-4.0, -3.5, -3.0, -2.4, -1.8, -1.2, -0.6, 0.0, 0.6, 1.2, 1.8, 2.4, 3.0, 3.5, 4.0]),
   },
 }
+
+for key in control_binning.keys():
+    control_binning[key]["jpt_r"] = Histogram(
+        "jpt_r", "jpt_r", [0,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160]
+    )
+    control_binning[key]["jeta_r"] = Histogram(
+        "jeta_r", "jeta_r", [-4.8, -4.6, -4.4, -4.2, -4.0, -3.8, -3.6, -3.4, -3.2, -3.0, -2.8, -2.6, -2.4, -2.2, -2.0, -1.8, -1.6, -1.4, -1.2, -1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 4.8]
+    )
+    control_binning[key]["jphi_r"] = Histogram(
+        "jphi_r", "jphi_r", [-3.14, -3.01, -2.89, -2.76, -2.64, -2.51, -2.39, -2.26, -2.14, -2.01, -1.88, -1.76, -1.63, -1.51, -1.38, -1.26, -1.13, -1.0, -0.88, -0.75, -0.63, -0.5, -0.38, -0.25, -0.13, 0.0, 0.13, 0.25, 0.38, 0.5, 0.63, 0.75, 0.88, 1.0, 1.13, 1.26, 1.38, 1.51, 1.63, 1.76, 1.88, 2.01, 2.14, 2.26, 2.39, 2.51, 2.64, 2.76, 2.89, 3.01, 3.14]
+    )
+    control_binning[key]["Njet_r"] = Histogram(
+        "Njet_r", "Njet_r", [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5]
+    )
+    control_binning[key]["mt_tot_puppi"] = Histogram(
+        "mt_tot_puppi", "mt_tot_puppi", [i for i in list(range(0, 50, 50)) + list(range(50, 500, 10)) + list(range(500, 1000, 25)) + list(range(1000, 2000, 50)) + list(range(2000, 5100, 100))]
+    )
+    control_binning[key]["ml_mass"] = Histogram(
+        "ml_mass", "ml_mass", [i for i in list(range(0, 50, 50)) + list(range(50, 500, 10)) + list(range(500, 1000, 25)) + list(range(1000, 2000, 50)) + list(range(2000, 5100, 100))]
+    )

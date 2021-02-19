@@ -522,17 +522,12 @@ def main(args):
             suffix = ["", "_top"]
             for i in range(2):
 
-                # if int(category) in SM_cats:
-                #     plot.add_legend(width=0.38, height=0.30)
-                # else:
-                #     plot.add_legend(width=0.40, height=0.30)
                 pos=3
-                # if channel=="tt" and int(category) in [10, 13]:
-                #     pos = 1
-                # if channel=="et" and int(category) in [12]:
-                #     pos = 1
-                height=0.2
-                width=0.4
+                if channel == "em" and int(category) in [13]:
+                    pos = 1
+                height, width, NColumns = 0.2, 0.4, 2
+                if int(category) in SM_cats and not args.linear:
+                    height, width, NColumns = 0.1, 0.8, 4
                 if channel in ["em"]:
                     n_bgs = 6
                 elif channel in ["et", "mt"]:
@@ -551,10 +546,15 @@ def main(args):
                 if args.linear:
                     height *= tot_in_legend/int(tot_in_legend/2.+0.5)
                     width *= 1./2
+                    NColumns = int(NColumns/2)
                 if args.nosig and args.linear:
                     height *= tot_in_legend/(tot_in_legend+n_sigs_bak)
                 if args.nosig and not args.linear:
                     height *= int(tot_in_legend/2.+0.5)/int((tot_in_legend+n_sigs_bak)/2.+0.5)
+                if width >= 0.8:
+                    width = 0.75
+                if height <= 0.15:
+                    height = 0.15
                 plot.add_legend(width=width, height=height, pos=pos)
                 # if int(category) < 30:
                 #     if not args.linear:
@@ -579,8 +579,8 @@ def main(args):
                         plot.legend(i).add_entry(0 if not args.split else 1, "bbH%s" % suffix[i], "bbH 400 GeV", 'l')
                     else:
                         plot.legend(i).add_entry(0 if not args.split else 1, "mssm_sig%s" % suffix[i], "#splitline{h,H,A #rightarrow #tau#tau}{m_{H} = 400 GeV}", 'l')
-                if not args.linear:
-                    plot.legend(i).setNColumns(2)
+                if NColumns != 1:
+                    plot.legend(i).setNColumns(NColumns)
             plot.legend(0).Draw()
             plot.legend(1).setAlpha(0.0)
             plot.legend(1).Draw()

@@ -473,7 +473,7 @@ def main(args):
                     procs_to_draw = ["stack", "total_bkg", "ggH", "ggH_top", "bbH", "bbH_top"] if not args.split else ["stack", "total_bkg"]
                 else:
                     procs_to_draw = ["stack", "total_bkg", "mssm_sig", "mssm_sig_top"] if not args.split else ["stack", "total_bkg"]
-            if not "data_obs" in procs_to_draw:
+            if not "data_obs" in procs_to_draw and not args.blinded:
                 procs_to_draw.append("data_obs")
             if args.nosig:
                 for p in ["ggH", "ggH_top", "bbH", "bbH_top", "mssm_sig", "mssm_sig_top"]:
@@ -482,10 +482,10 @@ def main(args):
             plot.subplot(0).Draw(procs_to_draw)
             if args.split == True:
                 if category == "1" and args.control_region:
-                    plot.subplot(1).Draw([
-                        "stack", "total_bkg",
-                        "data_obs"
-                    ])
+                    procs_to_draw = ["stack", "total_bkg"]
+                    if not args.blinded:
+                        procs_to_draw.append("data_obs")
+                    plot.subplot(1).Draw(procs_to_draw)
                 else:
                     if args.nosig:
                         procs_to_draw = ["stack", "total_bkg", "data_obs"]
@@ -648,9 +648,10 @@ def main(args):
 
             # save plot
             postfix = "prefit" if "prefit" in args.input else "postfit" if "postfit" in args.input else "undefined"
-            plot.save("%s/%s_%s_%s_%s%s%s%s.%s" % (args.output_dir, args.era, channel, args.control_variable if args.control_variable is not None else category,
-                                                postfix, "_linear" if args.linear else "", "_split" if args.split else "", "_nosignal" if args.nosig else "", "png"
-                                                if args.png else "pdf"))
+            plot.save("%s/%s_%s_%s_%s%s%s%s%s.%s" % (args.output_dir, args.era, channel, args.control_variable if args.control_variable is not None else category,
+                                                     postfix, "_linear" if args.linear else "", "_split" if args.split else "", "_nosignal" if args.nosig else "", "_blinded" if args.blinded else "",
+                                                     "png" if args.png else "pdf",
+                                                    ))
             plots.append(
                 plot
             )  # work around to have clean up seg faults only at the end of the script

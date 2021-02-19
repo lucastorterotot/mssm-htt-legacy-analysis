@@ -90,23 +90,17 @@ def setup_logging(output_file, level=logging.DEBUG):
 def main(args):
     if args.control_variable is None:
         channel_categories = {
-            #"et": ["nobtag_tight", "btag_tight", "nobtag_loosemt", "nobtag_tight"]
-            "et": ["1", "10", "11", "12", "13", "14", "15", "16", "17", "18", "32", "33",  "35", "36"],
-            #"mt": ["nobtag_tight", "btag_tight", "nobtag_loosemt", "nobtag_tight"]
-            "mt": ["1", "10", "11", "12", "13", "14", "15", "16", "17", "18", "32", "33",  "35", "36"],
-            #"tt": ["nobtag", "btag"]
-            "tt": ["10", "11", "12", "13", "14", "15", "16", "17", "32", "35"],
-            "em": ["1", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "32", "33", "34", "35", "36", "37"]
+            "et": ["1", "13", "15", "16", "20", "21", "32", "33",  "35", "36"],
+            "mt": ["1", "13", "15", "16", "20", "21", "32", "33",  "35", "36"],
+            "tt": ["1", "16", "20", "21", "32", "35"],
+            "em": ["1", "2", "13", "14", "16", "19", "20", "32", "33", "34", "35", "36", "37"]
         }
         if args.model_independent:
             channel_categories = {
-                #"et": ["nobtag_tight", "btag_tight", "nobtag_loosemt", "nobtag_tight"]
                 "et": ["32", "33",  "35", "36"],
-                #"mt": ["nobtag_tight", "btag_tight", "nobtag_loosemt", "nobtag_tight"]
                 "mt": ["32", "33",  "35", "36"],
-                #"tt": ["nobtag", "btag"]
                 "tt": ["32", "35"],
-                "em": ["1", "32", "33", "34", "35", "36", "37"]
+                "em": ["2", "32", "33", "34", "35", "36", "37"]
             }
     else:
         channel_categories = {
@@ -128,61 +122,45 @@ def main(args):
     else:
         category_dict = {
             "et": {
-                "1": "m_{T} (e) > 70 GeV",
-                "10": "N_{jets} = 0, m_{T} (e) < 40 GeV",
-                "11": "N_{jets} = 0, 40 GeV < m_{T} (e) < 70 GeV",
-                "12": "N_{jets} = 0, #Delta R #geq 2.5",
-                "13": "n_{jets} = 1, p_{T}(H) < 120 GeV",
-                "14": "n_{jets} = 1, 120 GeV < p_{T}(H) < 200 GeV",
-                "15": "n_{jets} = 1, p_{T}(H) > 200 GeV",
-                "16": "N_{jets} #geq 2, m_{jj} < 350 GeV",
-                "17": "N_{jets} #geq 2, 350 GeV < m_{jj} < 1000 GeV",
-                "18": "N_{jets} #geq 2, m_{jj} > 1000 GeV",
+                "1": "xxh",
+                "13": "t#bar{t}",
+                "15": "zll",
+                "16": "misc",
+                "20": "emb",
+                "21": "fakes",
                 "32": "No B-tag Tight-m_{T}",
                 "33": "No B-tag Loose-m_{T}",
                 "35": "B-tag Tight-m_{T}",
                 "36": "B-tag Loose-m_{T}",
                 },
             "mt": {
-                "1": "m_{T} (#mu) > 70 GeV",
-                "10": "N_{jets} = 0, m_{T} (e) < 40 GeV",
-                "11": "N_{jets} = 0, 40 GeV < m_{T} (e) < 70 GeV",
-                "12": "N_{jets} = 0, #Delta R #geq 2.5",
-                "13": "n_{jets} = 1, p_{T}(H) < 120 GeV",
-                "14": "n_{jets} = 1, 120 GeV < p_{T}(H) < 200 GeV",
-                "15": "n_{jets} = 1, p_{T}(H) > 200 GeV",
-                "16": "N_{jets} #geq 2, m_{jj} < 350 GeV",
-                "17": "N_{jets} #geq 2, 350 GeV < m_{jj} < 1000 GeV",
-                "18": "N_{jets} #geq 2, m_{jj} > 1000 GeV",
+                "1": "xxh",
+                "13": "t#bar{t}",
+                "15": "zll",
+                "16": "misc",
+                "20": "emb",
+                "21": "fakes",
                 "32": "No B-tag Tight-m_{T}",
                 "33": "No B-tag Loose-m_{T}",
                 "35": "B-tag Tight-m_{T}",
                 "36": "B-tag Loose-m_{T}",
                 },
             "tt": {
-                "10": "10",
-                "11": "11",
-                "12": "12",
-                "13": "13",
-                "14": "14",
-                "15": "15",
-                "16": "16",
-                "17": "17",
+                "1": "xxh",
+                "16": "misc",
+                "20": "emb",
+                "21": "fakes",
                 "32": "No B-tag",
                 "35": "B-tag",
                 },
             "em": {
-                "1": "d_{#zeta} < -35 GeV",
-                "10": "10",
-                "11": "11",
-                "12": "12",
-                "13": "13",
-                "14": "14",
-                "15": "15",
-                "16": "16",
-                "17": "17",
-                "18": "18",
-                "19": "19",
+                "1": "xxh",
+                "2": "d_{#zeta} < -35 GeV",
+                "13": "t#bar{t}",
+                "14" : "QCD",
+                "16": "misc",
+                "19" : "Diboson",
+                "20": "emb",
                 "32": "No B-tag, high d_{#zeta}",
                 "33": "No B-tag, medium d_{#zeta}",
                 "34": "No B-tag, low d_{#zeta}",
@@ -249,6 +227,14 @@ def main(args):
         for category in channel_categories[channel]:
             if args.control_region and category != "1":
                 continue
+            jetFakes_str = "jetFakes"
+            if int(category) != 2 and int(category) in SM_cats:
+                jetFakes_str = "jetFakesSM"
+                if "jetFakes" in bkg_processes:
+                    bkg_processes[bkg_processes.index("jetFakes")] = jetFakes_str
+            else:
+                if "jetFakesSM" in bkg_processes:
+                    bkg_processes[bkg_processes.index("jetFakesSM")] = jetFakes_str
             rootfile = rootfile_parser.Rootfile_parser(args.input)
             legend_bkg_processes = copy.deepcopy(bkg_processes)
             legend_bkg_processes.reverse()
@@ -262,7 +248,7 @@ def main(args):
 
             # get background histograms
             for process in bkg_processes:
-                if process in ["jetFakes", "jetFakesEMB"] and channel == "tt":
+                if process in [jetFakes_str, "jetFakesEMB"] and channel == "tt":
                     jetfakes_hist = rootfile.get(era, channel, category, process)
                     jetfakes_hist.Add(rootfile.get(era, channel, category, "wFakes"))
                     plot.add_hist(jetfakes_hist, process, "bkg")

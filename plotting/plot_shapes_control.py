@@ -16,6 +16,39 @@ logger = logging.getLogger("")
 from multiprocessing import Pool
 from multiprocessing import Process
 
+y_label_infos = {
+    "pT" : "p_{T} (1/GeV)",
+    "dR" : "#DeltaR",
+    "deta" : "#Delta #eta",
+    "eta" : "#eta",
+    "mass" : "m (1/GeV)",
+    "Dzeta" : "D_{#zeta} (1/GeV)",
+    "met" : "E_{T}^{miss} (1/GeV)",
+}
+
+for v in ["pt_1", "pt_2", "jpt_1", "jpt_2", "bpt_1", "bpt_2", "dijetpt", "pt_tt_puppi", "ptvis"]:
+    y_label_infos[v] = y_label_infos["pT"]
+
+for v in ["DiTauDeltaR"]:
+    y_label_infos[v] = y_label_infos["dR"]
+
+for v in ["jdeta"]:
+    y_label_infos[v] = y_label_infos["deta"]
+
+for v in ["eta_1", "eta_2", "jeta_1", "jeta_2"]:
+    y_label_infos[v] = y_label_infos["eta"]
+
+for v in ["m_vis", "m_sv_puppi", "mt_1_puppi", "mt_2_puppi", "mTdileptonMET_puppi", "mjj"]:
+    y_label_infos[v] = y_label_infos["mass"]
+
+for v in ["met", "puppimet"]:
+    y_label_infos[v] = y_label_infos["met"]
+
+for v in ["pZetaPuppiMissVis"]:
+    y_label_infos[v] = y_label_infos["Dzeta"]
+
+normalize_by_bin_width_variables_vetoed = ["nbtag", "njets"]
+
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description=
@@ -371,8 +404,8 @@ def main(info):
         plot.subplot(2).setXlabel(x_label)
     else:
         plot.subplot(2).setXlabel("NN output")
-    if args.normalize_by_bin_width:
-        plot.subplot(0).setYlabel("dN/d(NN output)")
+    if args.normalize_by_bin_width and not variable in normalize_by_bin_width_variables_vetoed:
+        plot.subplot(0).setYlabel("dN_{events}/d"+"{}".format(y_label_infos[variable]))
     else:
         plot.subplot(0).setYlabel("N_{events}")
 
@@ -459,7 +492,7 @@ def main(info):
     plot.legend(3).Draw()
 
     # draw additional labels
-    plot.DrawCMS()
+    #plot.DrawCMS()
     if "2016" in args.era:
         plot.DrawLumi("35.9 fb^{-1} (2016, 13 TeV)")
     elif "2017" in args.era:
@@ -491,7 +524,7 @@ def main(info):
         os.mkdir("%s_plots_%s"%(args.era,postfix))
     if not os.path.exists("%s_plots_%s/%s"%(args.era,postfix,channel)):
         os.mkdir("%s_plots_%s/%s"%(args.era,postfix,channel))
-    print "Trying to save the created plot"
+    print("Trying to save the created plot")
     plot.save("%s_plots_%s/%s/%s_%s_%s.%s" % (args.era, postfix, channel, args.era, channel, variable, "pdf"))
     plot.save("%s_plots_%s/%s/%s_%s_%s.%s" % (args.era, postfix, channel, args.era, channel, variable, "png"))
 

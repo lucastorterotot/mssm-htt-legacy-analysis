@@ -22,6 +22,10 @@ def parse_arguments():
     parser.add_argument(
         "-l", "--linear", action="store_true", help="Enable linear x-axis")
     parser.add_argument(
+        "-s", "--split", action="store_true", help="Enable linear x-axis")
+    parser.add_argument(
+        "-ns", "--nosig", action="store_true", help="Enable signal plotting")
+    parser.add_argument(
         "-c",
         "--channels",
         nargs="+",
@@ -170,11 +174,12 @@ def main(args):
                 },
 
         }
+
     SM_cats = [v for v in range(30)]
     BSM_cats = [v for v in range(30, 40)]
-    if args.linear == True:
-        split_value = 0
-    else:
+    
+    split_value = 0
+    if args.split == True:
         if args.normalize_by_bin_width:
             split_value = 1
         else:
@@ -239,7 +244,7 @@ def main(args):
             legend_bkg_processes = copy.deepcopy(bkg_processes)
             legend_bkg_processes.reverse()
             # create plot
-            if args.linear == True:
+            if args.split != True:
                 plot = dd.Plot(
                     [0.3, [0.3, 0.28]], "ModTDR", r=0.04, l=0.14, width=600)
             else:
@@ -259,25 +264,30 @@ def main(args):
                     process, "hist", fillcolor=styles.color_dict[process])
 
             # get signal histograms
-            plot_idx_to_add_signal = [0,2] if args.linear else [1,2]
+            plot_idx_to_add_signal = [0,2] if not args.split else [1,2]
             for i in plot_idx_to_add_signal:
                 if args.model_independent:
                     ggH_hist = rootfile.get(era, channel, category, "ggh_t").Clone()
                     ggH_hist.Add(rootfile.get(era, channel, category, "ggh_i"))
                     ggH_hist.Add(rootfile.get(era, channel, category, "ggh_b"))
+                    ggH_hist.Add(rootfile.get(era, channel, category, "TotalBkg"))
                     plot.subplot(i).add_hist(
                         ggH_hist, "ggH")
                     plot.subplot(i).add_hist(
                         ggH_hist, "ggH_top")
+                    bbH_hist = rootfile.get(era, channel, category, "bbh").Clone()
+                    bbH_hist.Add(rootfile.get(era, channel, category, "TotalBkg"))
                     plot.subplot(i).add_hist(
-                        rootfile.get(era, channel, category, "bbh"), "bbH")
+                        bbH_hist, "bbH")
                     plot.subplot(i).add_hist(
-                        rootfile.get(era, channel, category, "bbh"), "bbH_top")
+                        bbH_hist, "bbH_top")
                 else:
+                    mssm_sig_hist = rootfile.get(era, channel, category, "TotalSig").Clone()
+                    mssm_sig_hist.Add(rootfile.get(era, channel, category, "TotalBkg"))
                     plot.subplot(i).add_hist(
-                        rootfile.get(era, channel, category, "TotalSig"), "mssm_sig")
+                        mssm_sig_hist, "mssm_sig")
                     plot.subplot(i).add_hist(
-                        rootfile.get(era, channel, category, "TotalSig"), "mssm_sig_top")
+                        mssm_sig_hist, "mssm_sig_top")
 
             # get observed data and total background histograms
             plot.add_hist(
@@ -285,20 +295,19 @@ def main(args):
             plot.add_hist(
                 rootfile.get(era, channel, category, "TotalBkg"), "total_bkg")
 
-            plot.subplot(0).setGraphStyle("data_obs", "e0")
             if args.model_independent:
-                plot.subplot(0 if args.linear else 1).setGraphStyle(
+                plot.subplot(0 if not args.split else 1).setGraphStyle(
                     "ggH", "hist", linecolor=styles.color_dict["ggH"], linewidth=3)
-                plot.subplot(0 if args.linear else 1).setGraphStyle(
+                plot.subplot(0 if not args.split else 1).setGraphStyle(
                     "ggH_top", "hist", linecolor=0)
-                plot.subplot(0 if args.linear else 1).setGraphStyle(
+                plot.subplot(0 if not args.split else 1).setGraphStyle(
                     "bbH", "hist", linecolor=styles.color_dict["bbH"], linewidth=3)
-                plot.subplot(0 if args.linear else 1).setGraphStyle(
+                plot.subplot(0 if not args.split else 1).setGraphStyle(
                     "bbH_top", "hist", linecolor=0)
             else:
-                plot.subplot(0 if args.linear else 1).setGraphStyle(
+                plot.subplot(0 if not args.split else 1).setGraphStyle(
                     "mssm_sig", "hist", linecolor=styles.color_dict["bbH"], linewidth=3)
-                plot.subplot(0 if args.linear else 1).setGraphStyle(
+                plot.subplot(0 if not args.split else 1).setGraphStyle(
                     "mssm_sig_top", "hist", linecolor=0)
             plot.setGraphStyle(
                 "total_bkg",
@@ -311,8 +320,8 @@ def main(args):
             if args.model_independent:
                 bkg_ggH = plot.subplot(2).get_hist("ggH")
                 bkg_bbH = plot.subplot(2).get_hist("bbH")
-                bkg_ggH.Add(plot.subplot(2).get_hist("total_bkg"))
-                bkg_bbH.Add(plot.subplot(2).get_hist("total_bkg"))
+                # bkg_ggH.Add(plot.subplot(2).get_hist("total_bkg"))
+                # bkg_bbH.Add(plot.subplot(2).get_hist("total_bkg"))
                 plot.subplot(2).add_hist(bkg_ggH, "bkg_ggH")
                 plot.subplot(2).add_hist(bkg_ggH, "bkg_ggH_top")
                 plot.subplot(2).add_hist(bkg_bbH, "bkg_bbH")
@@ -341,7 +350,7 @@ def main(args):
                 ], "total_bkg")
             else:
                 bkg_sig = plot.subplot(2).get_hist("mssm_sig")
-                bkg_sig.Add(plot.subplot(2).get_hist("total_bkg"))
+                # bkg_sig.Add(plot.subplot(2).get_hist("total_bkg"))
                 plot.subplot(2).add_hist(bkg_sig, "bkg_mssm_sig")
                 plot.subplot(2).add_hist(bkg_sig, "bkg_mssm_sig_top")
                 plot.subplot(2).setGraphStyle(
@@ -367,16 +376,36 @@ def main(args):
                 plot.subplot(1).normalizeByBinWidth()
 
             # set axes limits and labels
-            plot.subplot(0).setYlims(
-                split_dict[channel],
-                # max(2 * plot.subplot(0).get_hist("total_bkg").GetMaximum(),
-                #     split_dict[channel] * 2))
-                max(1.3 * plot.subplot(0).get_hist("total_bkg").GetMaximum(),
-                    split_dict[channel] * 2))
+            # plot.subplot(0).setYlims(
+            #     split_dict[channel],
+            #     # max(2 * plot.subplot(0).get_hist("total_bkg").GetMaximum(),
+            #     #     split_dict[channel] * 2))
+            #     max(1.3 * plot.subplot(0).get_hist("total_bkg").GetMaximum(),
+            #         split_dict[channel] * 2))
 
-            plot.subplot(2).setYlims(0.75, 1.8)
+            y_factor_linear = 1.25
+            y_max = 0
+            for hist in ["total_bkg", "data_obs"]:
+                if plot.subplot(0).get_hist(hist).GetMaximum() > y_max:
+                    y_max = plot.subplot(0).get_hist(hist).GetMaximum()
+            if args.linear and not args.split:
+                plot.subplot(0).setYlims(0, max(y_factor_linear * y_max, split_dict[channel] * 2))
+            elif args.linear and args.split:
+                plot.subplot(0).setYlims(split_dict[channel], max(y_factor_linear * y_max, split_dict[channel] * 2))
+            else:
+                plot.subplot(0).setYlims(1.e-3, max(1e5 * y_max, split_dict[channel] * 2))
+                plot.subplot(0).setLogY()
+                
+            width=.3
+            plot.subplot(2).setYlims(1-width, 1+width)#(0.75, 1.8)
+            if (channel == "tt" and int(category) == 17) or (channel in ["et", "mt"] and int(category) == 18):
+                if 1+width < 2:
+                    plot.subplot(2).setYlims(1-width, 2)
+            elif (channel == "tt" and int(category) == 16):
+                if 1+width < 1.5:
+                    plot.subplot(2).setYlims(1-width, 1.5)
 
-            if args.linear != True:
+            if args.linear and args.split:
                 # plot.subplot(1).setYlims(1.e-4, split_dict[channel])
                 plot.subplot(1).setYlims(1.e-3, split_dict[channel])
                 plot.subplot(1).setLogY()
@@ -428,35 +457,39 @@ def main(args):
             #plot.subplot(2).setNYdivisions(3, 5)
 
             # draw subplots. Argument contains names of objects to be drawn in corresponding order.
-            # procs_to_draw = ["stack", "total_bkg", "ggH", "ggH_top", "bbH", "bbH_top", "data_obs"] if args.linear else ["stack", "total_bkg", "data_obs"]
+            # procs_to_draw = ["stack", "total_bkg", "ggH", "ggH_top", "bbH", "bbH_top", "data_obs"] if not args.split else ["stack", "total_bkg", "data_obs"]
             if category == "1" and args.control_region:
-                procs_to_draw = ["stack", "total_bkg", "data_obs"] if args.linear else ["stack", "total_bkg", "data_obs"]
+                procs_to_draw = ["stack", "total_bkg", "data_obs"] if not args.split else ["stack", "total_bkg", "data_obs"]
             else:
                 if args.model_independent:
-                    procs_to_draw = ["stack", "total_bkg", "ggH", "ggH_top", "bbH", "bbH_top", "data_obs"] if args.linear else ["stack", "total_bkg", "data_obs"]
+                    procs_to_draw = ["stack", "total_bkg", "ggH", "ggH_top", "bbH", "bbH_top"] if not args.split else ["stack", "total_bkg"]
                 else:
-                    procs_to_draw = ["stack", "total_bkg", "mssm_sig", "mssm_sig_top", "data_obs"] if args.linear else ["stack", "total_bkg", "data_obs"]
-                if args.blinded:
-                    procs_to_draw.remove("data_obs")
+                    procs_to_draw = ["stack", "total_bkg", "mssm_sig", "mssm_sig_top"] if not args.split else ["stack", "total_bkg"]
+            if not "data_obs" in procs_to_draw:
+                procs_to_draw.append("data_obs")
+            if args.nosig:
+                for p in ["ggH", "ggH_top", "bbH", "bbH_top", "mssm_sig", "mssm_sig_top"]:
+                    if p in procs_to_draw:
+                        procs_to_draw.remove(p)
             plot.subplot(0).Draw(procs_to_draw)
-            if args.linear != True:
-                # plot.subplot(1).Draw([
-                #     "stack", "total_bkg", "ggH", "bbH",
-                #     "ggH_top", "bbH_top",
-                #     "data_obs"
-                # ])
+            if args.split == True:
                 if category == "1" and args.control_region:
                     plot.subplot(1).Draw([
                         "stack", "total_bkg",
                         "data_obs"
                     ])
                 else:
-                    if args.model_independent:
-                        procs_to_draw = ["stack", "total_bkg", "ggH", "bbH", "ggH_top", "bbH_top", "data_obs"]
+                    if args.nosig:
+                        procs_to_draw = ["stack", "total_bkg", "data_obs"]
+                        if args.blinded:
+                            procs_to_draw.remove("data_obs")
                     else:
-                        procs_to_draw = ["stack", "total_bkg", "mssm_sig", "mssm_sig_top", "data_obs"]
-                    if args.blinded:
-                        procs_to_draw.remove("data_obs")
+                        if args.model_independent:
+                            procs_to_draw = ["stack", "total_bkg", "ggH", "bbH", "ggH_top", "bbH_top", "data_obs"]
+                        else:
+                            procs_to_draw = ["stack", "total_bkg", "mssm_sig", "mssm_sig_top", "data_obs"]
+                        if args.blinded:
+                            procs_to_draw.remove("data_obs")
                     plot.subplot(1).Draw(procs_to_draw)
             if category == "1" and args.control_region:
                 plot.subplot(2).Draw([
@@ -464,39 +497,82 @@ def main(args):
                     "data_obs"
                 ])
             else:
-                if args.model_independent:
-                    procs_to_draw = ["total_bkg", "bkg_ggH", "bkg_bbH", "bkg_ggH_top", "bkg_bbH_top", "data_obs"]
+                if args.nosig:
+                    procs_to_draw = ["total_bkg", "data_obs"]
+                    if args.blinded:
+                        procs_to_draw.remove("data_obs")
                 else:
-                    procs_to_draw = ["total_bkg", "bkg_mssm_sig", "bkg_mssm_sig_top", "data_obs"]
-                if args.blinded:
-                    procs_to_draw.remove("data_obs")
+                    if args.model_independent:
+                        procs_to_draw = ["total_bkg", "bkg_ggH", "bkg_bbH", "bkg_ggH_top", "bkg_bbH_top", "data_obs"]
+                    else:
+                        procs_to_draw = ["total_bkg", "bkg_mssm_sig", "bkg_mssm_sig_top", "data_obs"]
+                    if args.blinded:
+                        procs_to_draw.remove("data_obs")
                 plot.subplot(2).Draw(procs_to_draw)
 
             # create legends
             suffix = ["", "_top"]
             for i in range(2):
 
-                if int(category) < 30 and int(category) > 1:
-                    plot.add_legend(width=0.38, height=0.30)
+                # if int(category) in SM_cats:
+                #     plot.add_legend(width=0.38, height=0.30)
+                # else:
+                #     plot.add_legend(width=0.40, height=0.30)
+                pos=3
+                # if channel=="tt" and int(category) in [10, 13]:
+                #     pos = 1
+                # if channel=="et" and int(category) in [12]:
+                #     pos = 1
+                height=0.2
+                width=0.4
+                if channel in ["em"]:
+                    n_bgs = 6
+                elif channel in ["et", "mt"]:
+                    n_bgs = 5
+                elif channel in ["tt"]:
+                    n_bgs = 5
+                n_bgs += 2 # data and bkg unc
+                if args.model_independent:
+                    n_sigs = 2
                 else:
-                    plot.add_legend(width=0.40, height=0.30)
+                    n_sigs = 1
+                n_sigs_bak = n_sigs
+                if args.nosig:
+                    n_sigs = 0
+                tot_in_legend = n_bgs + n_sigs
+                if args.linear:
+                    height *= tot_in_legend/int(tot_in_legend/2.+0.5)
+                    width *= 1./2
+                if args.nosig and args.linear:
+                    height *= tot_in_legend/(tot_in_legend+n_sigs_bak)
+                if args.nosig and not args.linear:
+                    height *= int(tot_in_legend/2.+0.5)/int((tot_in_legend+n_sigs_bak)/2.+0.5)
+                plot.add_legend(width=width, height=height, pos=pos)
+                # if int(category) < 30:
+                #     if not args.linear:
+                #         plot.add_legend(width=0.30, height=0.25, pos=pos)
+                #     else:
+                #         plot.add_legend(width=0.30, height=0.25, pos=pos)
+                # else:
+                #     plot.add_legend(width=0.30, height=0.25, pos=pos)
                 # plot.add_legend(width=0.6, height=0.15)
                 for process in legend_bkg_processes:
                     plot.legend(i).add_entry(
                         0, process, styles.legend_label_dict[process.replace("TTL", "TT").replace("VVL", "VV")], 'f')
                 plot.legend(i).add_entry(0, "total_bkg", "Bkg. unc.", 'f')
-                if args.control_region and category == "1":
-                    # plot.legend(i).add_entry(0 if args.linear else 1, "mssm_sig%s" % suffix[i], "#splitline{H #rightarrow #tau#tau}{(m_{H}=1200 GeV)}", 'l')
-                    pass
-                else:
-                    if args.model_independent:
-                        plot.legend(i).add_entry(0 if args.linear else 1, "ggH%s" % suffix[i], "#splitline{ggH}{(m_{H} = 2600 GeV)}", 'l')
-                        plot.legend(i).add_entry(0 if args.linear else 1, "bbH%s" % suffix[i], "#splitline{bbH}{(m_{H} = 2600 GeV)}", 'l')
-                    else:
-                        plot.legend(i).add_entry(0 if args.linear else 1, "mssm_sig%s" % suffix[i], "#splitline{H #rightarrow #tau#tau}{#splitline{(m_{A}=1200 GeV,}{ tan #beta = 10)}}", 'l')
                 if not args.blinded:
                     plot.legend(i).add_entry(0, "data_obs", "Data", 'PE')
-                plot.legend(i).setNColumns(2)
+                if args.control_region and category == "1":
+                    # plot.legend(i).add_entry(0 if not args.split else 1, "mssm_sig%s" % suffix[i], "#splitline{H #rightarrow #tau#tau}{(m_{H}=1200 GeV)}", 'l')
+                    pass
+                elif not args.nosig:
+                    if args.model_independent:
+                        plot.legend(i).add_entry(0 if not args.split else 1, "ggH%s" % suffix[i], "ggH 400 GeV", 'l')
+                        plot.legend(i).add_entry(0 if not args.split else 1, "bbH%s" % suffix[i], "bbH 400 GeV", 'l')
+                    else:
+                        plot.legend(i).add_entry(0 if not args.split else 1, "mssm_sig%s" % suffix[i], "#splitline{h,H,A #rightarrow #tau#tau}{m_{H} = 400 GeV}", 'l')
+                if not args.linear:
+                    plot.legend(i).setNColumns(2)
             plot.legend(0).Draw()
             plot.legend(1).setAlpha(0.0)
             plot.legend(1).Draw()
@@ -521,20 +597,20 @@ def main(args):
                     plot.legend(i + 2).add_entry(0, "data_obs", "Data", 'PE')
                 if args.control_region and category == "1":
                     pass
-                else:
+                elif not args.nosig:
                     if args.model_independent:
-                        plot.legend(i + 2).add_entry(0 if args.linear else 1, "ggH%s" % suffix[i],
+                        plot.legend(i + 2).add_entry(0 if not args.split else 1, "ggH%s" % suffix[i],
                                              "ggH+bkg.", 'l')
-                        plot.legend(i + 2).add_entry(0 if args.linear else 1, "bbH%s" % suffix[i],
+                        plot.legend(i + 2).add_entry(0 if not args.split else 1, "bbH%s" % suffix[i],
                                              "bbH+bkg.", 'l')
                     else:
-                        plot.legend(i + 2).add_entry(0 if args.linear else 1, "mssm_sig%s" % suffix[i],
+                        plot.legend(i + 2).add_entry(0 if not args.split else 1, "mssm_sig%s" % suffix[i],
                                                      "H+bkg.", 'l')
                 plot.legend(i + 2).add_entry(0, "total_bkg", "Bkg. unc.", 'f')
                 plot.legend(i + 2).setNColumns(3)
-            plot.legend(2).Draw()
-            plot.legend(3).setAlpha(0.0)
-            plot.legend(3).Draw()
+            # plot.legend(2).Draw()
+            # plot.legend(3).setAlpha(0.0)
+            # plot.legend(3).Draw()
 
             # draw additional labels
             # plot.DrawCMS()
@@ -549,14 +625,23 @@ def main(args):
                 raise Exception
 
             posChannelCategoryLabelLeft = None
+            # plot.DrawChannelCategoryLabel(
+            #     "%s, %s" % (channel_dict[channel], category_dict[channel][category]),
+            #     begin_left=posChannelCategoryLabelLeft)
             plot.DrawChannelCategoryLabel(
-                "%s, %s" % (channel_dict[channel], category_dict[channel][category]),
+                "%s, %s" % (str(channel), str(int(category))),
                 begin_left=posChannelCategoryLabelLeft)
+
+            plot.subplot(0).setGraphStyle("data_obs", "e0", markersize=.5)
+            plot.subplot(2).setGraphStyle("data_obs", "e0", markersize=.5)
+            ax=plot.subplot(2)._hists['total_bkg'][0].GetXaxis()
+            ax.SetMoreLogLabels()
+            ax.SetNoExponent()
 
             # save plot
             postfix = "prefit" if "prefit" in args.input else "postfit" if "postfit" in args.input else "undefined"
-            plot.save("%s/%s_%s_%s_%s.%s" % (args.output_dir, args.era, channel, args.control_variable if args.control_variable is not None else category,
-                                                postfix, "png"
+            plot.save("%s/%s_%s_%s_%s%s%s%s.%s" % (args.output_dir, args.era, channel, args.control_variable if args.control_variable is not None else category,
+                                                postfix, "_linear" if args.linear else "", "_split" if args.split else "", "_nosignal" if args.nosig else "", "png"
                                                 if args.png else "pdf"))
             plots.append(
                 plot

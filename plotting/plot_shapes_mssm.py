@@ -175,8 +175,9 @@ def main(args):
 
         }
 
-    SM_cats = [v for v in range(30)]
+    SM_cats = [v for v in range(30) if v != 2]
     BSM_cats = [v for v in range(30, 40)]
+    BSM_cats.append(2)
     
     split_value = 0
     if args.split == True:

@@ -581,7 +581,8 @@ def main(args):
                         plot.legend(i).add_entry(0 if not args.split else 1, "ggH%s" % suffix[i], "ggH 400 GeV", 'l')
                         plot.legend(i).add_entry(0 if not args.split else 1, "bbH%s" % suffix[i], "bbH 400 GeV", 'l')
                     else:
-                        plot.legend(i).add_entry(0 if not args.split else 1, "mssm_sig%s" % suffix[i], "#splitline{h,H,A #rightarrow #tau#tau}{m_{H} = 400 GeV}", 'l')
+                        #plot.legend(i).add_entry(0 if not args.split else 1, "mssm_sig%s" % suffix[i], "#splitline{h,H,A #rightarrow #tau#tau}{m_{H} = 400 GeV}", 'l')
+                        plot.legend(i).add_entry(0 if not args.split else 1, "mssm_sig%s" % suffix[i], "SM Higgs", 'l')
                 if NColumns != 1:
                     plot.legend(i).setNColumns(NColumns)
             plot.legend(0).Draw()

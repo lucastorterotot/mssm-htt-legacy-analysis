@@ -401,12 +401,15 @@ def main(args):
                 
             width=.3
             plot.subplot(2).setYlims(1-width, 1+width)#(0.75, 1.8)
-            # if (channel == "tt" and int(category) == 17) or (channel in ["et", "mt"] and int(category) == 18):
-            #     if 1+width < 2:
-            #         plot.subplot(2).setYlims(1-width, 2)
-            # elif (channel == "tt" and int(category) == 16):
-            #     if 1+width < 1.5:
-            #         plot.subplot(2).setYlims(1-width, 1.5)
+            if channel in ["et", "mt"] and int(category) in [32, 35]:
+                if 1+width < 2:
+                    plot.subplot(2).setYlims(1-width, 2)
+            elif channel == "tt" and int(category) in [32]:
+                if 1+width < 2:
+                    plot.subplot(2).setYlims(1-width, 2)
+            elif channel == "tt" and int(category) in [35]:
+                if 1+width < 3:
+                    plot.subplot(2).setYlims(1-width, 3)
 
             if args.linear and args.split:
                 # plot.subplot(1).setYlims(1.e-4, split_dict[channel])

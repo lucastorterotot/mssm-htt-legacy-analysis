@@ -177,6 +177,12 @@ def parse_arguments():
         action="store_true",
         help="Enables the use of the ML Higgs mass predictions instead of mTtot."
     )
+
+    parser.add_argument(
+        "--additionnal_cut",
+        default=None,
+        help="Additionnal selection to apply: jets_r, low_X with X in m_sv_puppi mt_tot_puppi ml_mass"
+    )
     return parser.parse_args()
 
 
@@ -378,89 +384,89 @@ def main(args):
                                             for mass in susy_masses[era]["bbH"]},
         }
 
-    def get_control_units(channel, era, datasets):
+    def get_control_units(channel, era, datasets, additionnal_cut = args.additionnal_cut):
         return {
                'data' : [Unit(
                    datasets['data'],[
-                       channel_selection(channel, era)],
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'emb' : [Unit(
                    datasets['EMB'],[
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        ZTT_embedded_process_selection(channel, era)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'ztt' : [Unit(
                    datasets['DY'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        DY_process_selection(channel, era),
                        ZTT_process_selection(channel)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'zl' : [Unit(
                    datasets['DY'], [
-                      channel_selection(channel, era),
+                      channel_selection(channel, era, additionnal_cut = additionnal_cut),
                       DY_process_selection(channel, era),
                       ZL_process_selection(channel)],
                       [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'zj' : [Unit(
                    datasets['DY'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        DY_process_selection(channel, era),
                        ZJ_process_selection(channel)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'ttl' : [Unit(
                    datasets['TT'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        TT_process_selection(channel, era),
                        TTL_process_selection(channel)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'ttt' : [Unit(
                    datasets['TT'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        TT_process_selection(channel, era),
                        TTT_process_selection(channel)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'ttj' : [Unit(
                    datasets['TT'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        TT_process_selection(channel, era),
                        TTJ_process_selection(channel)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'vvl' : [Unit(
                    datasets['VV'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        VV_process_selection(channel, era),
                        VVL_process_selection(channel)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'vvt' : [Unit(
                    datasets['VV'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        VV_process_selection(channel, era),
                        VVT_process_selection(channel)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'vvj' : [Unit(
                    datasets['VV'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        VV_process_selection(channel, era),
                        VVJ_process_selection(channel)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'w' :   [Unit(
                    datasets['W'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        W_process_selection(channel, era)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'ggh' : [Unit(
                    datasets['ggH'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        ggH125_process_selection(channel, era)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                'qqh' : [Unit(
                    datasets['qqH'], [
-                       channel_selection(channel, era),
+                       channel_selection(channel, era, additionnal_cut = additionnal_cut),
                        qqH125_process_selection(channel, era)],
                        [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])],
                 **{"ggh{}".format(mass): [Unit(
                                             datasets["susyggH_{}".format(mass)], [
-                                                channel_selection(channel, era),
+                                                channel_selection(channel, era, additionnal_cut = additionnal_cut),
                                                 SUSYggH_process_selection(channel, era),
                                                 contribution_selection(channel),
                                                 ], [control_binning[channel][v] for v in set(control_binning[channel].keys()) & set(args.control_plot_set)])

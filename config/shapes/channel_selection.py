@@ -1,6 +1,6 @@
 from ntuple_processor.utils import Selection
 
-def channel_selection(channel, era):
+def channel_selection(channel, era, additionnal_cut = None):
     # Specify general channel and era independent cuts.
     cuts = [
         ("flagMETFilter == 1", "METFilter"),
@@ -9,6 +9,22 @@ def channel_selection(channel, era):
         ("dilepton_veto<0.5", "dilepton_veto"),
         ("q_1*q_2<0", "os"),
     ]
+    if additionnal_cut == "jets_r":
+        cuts.extend([
+            ("jpt_r > 0", "jets_r"),
+        ])
+    for m_var in ["mt_tot_puppi", "m_sv_puppi", "ml_mass"]:
+        m_var_for_cut = m_var
+        if m_var == "ml_mass":
+            m_var_for_cut = "DNN_selected_NNs_FastSim_DeepTau_inclusive_1TeV_PuppiMET_with_METcov_j1j2jr_Nnu_Npu_NN_activation_softplus_batch_size_2048_mapesqrt_b_Adam_gu_inclusive_3_layers_1000_neurons.prediction"
+        if additionnal_cut == "low_{}".format(m_var):
+            cuts.extend([
+                ("{} < 250".format(m_var_for_cut), str(additionnal_cut)),
+            ])
+        elif additionnal_cut == "high_{}".format(m_var):
+            cuts.extend([
+                ("{} > 250".format(m_var_for_cut), str(additionnal_cut)),
+            ])
     if "mt" in channel:
         #  Add channel specific cuts to the list of cuts.
         cuts.extend([

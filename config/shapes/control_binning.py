@@ -607,6 +607,14 @@ control_binning = {
   },
 }
 
+m_vars = {
+    "mt_tot_puppi" : "mt_tot_puppi",
+    "ml_mass" : "DNN_selected_NNs_FastSim_DeepTau_inclusive_1TeV_PuppiMET_with_METcov_j1j2jr_Nnu_Npu_NN_activation_softplus_batch_size_2048_mapesqrt_b_Adam_gu_inclusive_3_layers_1000_neurons.prediction",
+    "m_sv_puppi" : "m_sv_puppi",
+}
+
+m_vars_binning = [i for i in list(range(0, 501, 10))]
+
 for key in control_binning.keys():
     control_binning[key]["jpt_r"] = Histogram(
         "jpt_r", "jpt_r", [0,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160]
@@ -620,9 +628,8 @@ for key in control_binning.keys():
     control_binning[key]["Njet_r"] = Histogram(
         "Njet_r", "Njet_r", [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5]
     )
-    control_binning[key]["mt_tot_puppi"] = Histogram(
-        "mt_tot_puppi", "mt_tot_puppi", [i for i in list(range(0, 50, 50)) + list(range(50, 500, 10)) + list(range(500, 1000, 25)) + list(range(1000, 2000, 50)) + list(range(2000, 5100, 100))]
-    )
-    control_binning[key]["ml_mass"] = Histogram(
-        "ml_mass", "DNN_selected_NNs_FastSim_DeepTau_inclusive_1TeV_PuppiMET_with_METcov_j1j2jr_Nnu_Npu_NN_activation_softplus_batch_size_2048_mapesqrt_b_Adam_gu_inclusive_3_layers_1000_neurons.prediction", [i for i in list(range(0, 50, 50)) + list(range(50, 500, 10)) + list(range(500, 1000, 25)) + list(range(1000, 2000, 50)) + list(range(2000, 5100, 100))]
-    )
+
+    for v1 in m_vars:
+        control_binning[key][v1] = Histogram(
+            v1, m_vars[v1], m_vars_binning
+        )

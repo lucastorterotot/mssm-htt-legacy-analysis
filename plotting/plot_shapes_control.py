@@ -21,13 +21,17 @@ y_label_infos = {
     "dR" : "#DeltaR",
     "deta" : "#Delta #eta",
     "eta" : "#eta",
+    "phi" : "#phi",
     "mass" : "m (1/GeV)",
     "Dzeta" : "D_{#zeta} (1/GeV)",
     "met" : "E_{T}^{miss} (1/GeV)",
 }
 
-for v in ["pt_1", "pt_2", "jpt_1", "jpt_2", "bpt_1", "bpt_2", "dijetpt", "pt_tt_puppi", "ptvis"]:
+for v in ["pt_1", "pt_2", "jpt_1", "jpt_2", "jpt_r", "bpt_1", "bpt_2", "dijetpt", "pt_tt_puppi", "ptvis"]:
     y_label_infos[v] = y_label_infos["pT"]
+
+for v in ["phi_1", "phi_2", "jphi_1", "jphi_2", "jphi_r", "puppimetphi"]:
+    y_label_infos[v] = y_label_infos["phi"]
 
 for v in ["DiTauDeltaR"]:
     y_label_infos[v] = y_label_infos["dR"]
@@ -35,10 +39,10 @@ for v in ["DiTauDeltaR"]:
 for v in ["jdeta"]:
     y_label_infos[v] = y_label_infos["deta"]
 
-for v in ["eta_1", "eta_2", "jeta_1", "jeta_2"]:
+for v in ["eta_1", "eta_2", "jeta_1", "jeta_2", "jeta_r"]:
     y_label_infos[v] = y_label_infos["eta"]
 
-for v in ["m_vis", "m_sv_puppi", "mt_1_puppi", "mt_2_puppi", "mTdileptonMET_puppi", "mjj"]:
+for v in ["m_vis", "m_sv_puppi", "mt_1_puppi", "mt_2_puppi", "mTdileptonMET_puppi", "mjj", "ml_mass", "mt_tot_puppi"]:
     y_label_infos[v] = y_label_infos["mass"]
 
 for v in ["met", "puppimet"]:
@@ -47,7 +51,7 @@ for v in ["met", "puppimet"]:
 for v in ["pZetaPuppiMissVis"]:
     y_label_infos[v] = y_label_infos["Dzeta"]
 
-normalize_by_bin_width_variables_vetoed = ["nbtag", "njets"]
+normalize_by_bin_width_variables_vetoed = ["nbtag", "njets", "Njet_r", "npv"]
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
@@ -95,6 +99,11 @@ def parse_arguments():
         type=str,
         default=None,
         help="Draw variation of jetFakes or QCD in derivation region.")
+    parser.add_argument(
+        "--suffix",
+        type=str,
+        default="",
+        help="Suffix for the output directory.")
 
     return parser.parse_args()
 
@@ -519,6 +528,8 @@ def main(info):
         postfix = "emb_ff"
     if args.draw_jet_fake_variation is not None:
         postfix = postfix + "_" + args.draw_jet_fake_variation
+    if args.suffix != "":
+        postfix = postfix + "_" + args.suffix
 
     if not os.path.exists("%s_plots_%s"%(args.era,postfix)):
         os.mkdir("%s_plots_%s"%(args.era,postfix))

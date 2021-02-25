@@ -386,6 +386,7 @@ def main(args):
 
             y_factor_linear = 1.25
             y_max = 0
+            flatter_distribution = False
             if channel == "em" and int(category) == 13:
                 y_factor_linear = 1.5
             for hist in ["total_bkg", "data_obs"]:
@@ -396,7 +397,14 @@ def main(args):
             elif args.linear and args.split:
                 plot.subplot(0).setYlims(split_dict[channel], max(y_factor_linear * y_max, split_dict[channel] * 2))
             else:
-                plot.subplot(0).setYlims(1.e-3, max(1e1 * y_max, split_dict[channel] * 2))
+                if channel == "em" and int(category) in [2, 32, 35, 37]:
+                    flatter_distribution = True
+                    if int(category) in [35, 37] and args.ml_mass:
+                        plot.subplot(0).setYlims(1.e-3, max(2e3 * y_max, split_dict[channel] * 2))
+                    else:
+                        plot.subplot(0).setYlims(1.e-3, max(5e2 * y_max, split_dict[channel] * 2))
+                else:
+                    plot.subplot(0).setYlims(1.e-3, max(1e1 * y_max, split_dict[channel] * 2))
                 plot.subplot(0).setLogY()
                 
             width=.3
@@ -533,6 +541,8 @@ def main(args):
                     height, width, NColumns = 0.1, 0.8, 4
                 if int(category) in BSM_cats and not args.linear:
                     height, width, NColumns = 0.35, 0.2, 1
+                    if flatter_distribution:
+                        height, width, NColumns = 0.2, 0.4, 2
                 if channel in ["em"]:
                     n_bgs = 6
                 elif channel in ["et", "mt"]:

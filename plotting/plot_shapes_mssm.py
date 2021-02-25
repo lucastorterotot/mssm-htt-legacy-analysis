@@ -551,6 +551,8 @@ def main(args):
                 elif channel in ["tt"]:
                     n_bgs = 5
                 n_bgs += 2 # data and bkg unc
+                if args.blinded:
+                    n_bgs-=1 # no data in this case
                 if args.model_independent:
                     n_sigs = 2
                 else:
@@ -563,8 +565,10 @@ def main(args):
                     height *= tot_in_legend/int(tot_in_legend/2.+0.5)
                     width *= 1./2
                     NColumns = int(NColumns/2)
-                if args.nosig and args.linear:
+                if args.nosig and (args.linear or flatter_distribution):
                     height *= tot_in_legend/(tot_in_legend+n_sigs_bak)
+                    if args.blinded:
+                        height *= (tot_in_legend+.2)/(tot_in_legend)
                 if args.nosig and not args.linear:
                     height *= int(tot_in_legend/2.+0.5)/int((tot_in_legend+n_sigs_bak)/2.+0.5)
                 if width >= 0.8:

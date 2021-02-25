@@ -541,7 +541,7 @@ def main(args):
                 if int(category) in SM_cats and not args.linear:
                     height, width, NColumns = 0.1, 0.8, 4
                 if int(category) in BSM_cats and not args.linear:
-                    height, width, NColumns = 0.35, 0.2, 1
+                    height, width, NColumns = 0.4, 0.2, 1
                     if flatter_distribution:
                         height, width, NColumns = 0.2, 0.4, 2
                 if channel in ["em"]:
@@ -565,7 +565,7 @@ def main(args):
                     height *= tot_in_legend/int(tot_in_legend/2.+0.5)
                     width *= 1./2
                     NColumns = int(NColumns/2)
-                if args.nosig and (args.linear or flatter_distribution):
+                if args.nosig and args.linear:
                     height *= tot_in_legend/(tot_in_legend+n_sigs_bak)
                     if args.blinded:
                         height *= (tot_in_legend+.2)/(tot_in_legend)
@@ -576,14 +576,7 @@ def main(args):
                 if height <= 0.15:
                     height = 0.15
                 plot.add_legend(width=width, height=height, pos=pos)
-                # if int(category) < 30:
-                #     if not args.linear:
-                #         plot.add_legend(width=0.30, height=0.25, pos=pos)
-                #     else:
-                #         plot.add_legend(width=0.30, height=0.25, pos=pos)
-                # else:
-                #     plot.add_legend(width=0.30, height=0.25, pos=pos)
-                # plot.add_legend(width=0.6, height=0.15)
+
                 for process in legend_bkg_processes:
                     plot.legend(i).add_entry(
                         0, process, styles.legend_label_dict[process.replace("TTL", "TT").replace("VVL", "VV")], 'f')

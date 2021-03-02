@@ -1,9 +1,13 @@
 from ntuple_processor import Histogram
 from ntuple_processor.utils import Selection
 
+DNN1_var = "DNN_selected_NNs_FastSim_DeepTau_inclusive_1TeV_PuppiMET_with_METcov_j1j2jr_Nnu_Npu_NN_activation_softplus_batch_size_2048_mapesqrt_b_Adam_gu_inclusive_3_layers_1000_neurons.prediction"
+#DNN1_var = "DNN1"
+
 m_sv_hist = Histogram("m_sv_puppi", "m_sv_puppi", [i for i in range(0, 255, 5)])
 mt_tot_hist = Histogram("mt_tot_puppi", "mt_tot_puppi", [i for i in list(range(0, 50, 50)) + list(range(50, 500, 10)) + list(range(500, 1000, 25)) + list(range(1000, 2000, 50)) + list(range(2000, 5100, 100))])
-ML_preds_hist = Histogram("ml_mass", "DNN_selected_NNs_FastSim_DeepTau_inclusive_1TeV_PuppiMET_with_METcov_j1j2jr_Nnu_Npu_NN_activation_softplus_batch_size_2048_mapesqrt_b_Adam_gu_inclusive_3_layers_1000_neurons.prediction", [i for i in list(range(0, 50, 50)) + list(range(50, 500, 10)) + list(range(500, 1000, 25)) + list(range(1000, 2000, 50)) + list(range(2000, 5100, 100))])
+ML_preds_hist = Histogram("ml_mass", DNN1_var, [i for i in list(range(0, 50, 50)) + list(range(50, 500, 10)) + list(range(500, 1000, 25)) + list(range(1000, 2000, 50)) + list(range(2000, 5100, 100))])
+ML_preds_hist_sm = Histogram("ml_mass", DNN1_var, [i for i in range(0, 255, 5)])
 
 lt_categorization_sm = [
     # Categorization targetting standard model processes.
@@ -115,6 +119,118 @@ em_categorization_sm = [
                                                                   ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
                                                                   ("nbtag==0&&m_sv_puppi<250", "mssm_veto")]),
                     [m_sv_hist]),
+]
+
+lt_ML_categorization_sm = [
+    # Categorization targetting standard model processes.
+    (Selection(name="NJets0_MTLt40",             cuts = [("njets==0&&mt_1_puppi<40", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+    (Selection(name="NJets0_MT40To70",           cuts = [("njets==0&&mt_1_puppi>=40&&mt_1_puppi<70", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+    (Selection(name="NJetsGt0_DeltaRGt2p5",      cuts = [("njets>=1&&DiTauDeltaR>=2.5", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+    (Selection(name="NJets1_PTHLt120",           cuts = [("njets==1&&DiTauDeltaR<2.5&&pt_tt_puppi<120", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+    (Selection(name="NJets1_PTH120To200",        cuts = [("njets==1&&DiTauDeltaR<2.5&&pt_tt_puppi>=120&&pt_tt_puppi<200", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+    (Selection(name="NJets1_PTHGt200",           cuts = [("njets==1&&DiTauDeltaR<2.5&&pt_tt_puppi>=200", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+    (Selection(name="NJetsGt1_MJJLt350",         cuts = [("njets>=2&&DiTauDeltaR<2.5&&mjj<350", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+    (Selection(name="NJetsGt1_MJJ350To1000",     cuts = [("njets>=2&&DiTauDeltaR<2.5&&mjj>=350&&mjj<1000", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+    (Selection(name="NJetsGt1_MJJGt1000",        cuts = [("njets>=2&&DiTauDeltaR<2.5&&mjj>=1000", "category_selection"),
+                                                        ("mt_1_puppi<70", "signal_region_cut"),
+                                                        ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+            [ML_preds_hist_sm]),
+]
+
+tt_ML_categorization_sm = [
+            # Categorization targetting standard model processes.
+            (Selection(name="Njets0_DeltaRLt3p2",                        cuts=[("njets==0&&DiTauDeltaR<3.2", "category_selection"),
+                                                                              ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="Njets1_DeltaRLt2p5_PTHLt100",               cuts=[("njets==1&&DiTauDeltaR<2.5&&pt_tt_puppi<100", "category_selection"),
+                                                                              ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="Njets1_DeltaR2p5To3p2_PTHLt100",            cuts=[("njets==1&&DiTauDeltaR>=2.5&&DiTauDeltaR<3.2&&pt_tt_puppi<100", "category_selection"),
+                                                                              ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="Njets1_DeltaRLt3p2_PTHGt100",               cuts=[("njets==1&&DiTauDeltaR<3.2&&pt_tt_puppi>=100", "category_selection"),
+                                                                              ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NjetsGt2_DeltaRLt2p5_MJJLt350",             cuts=[("njets>=2&&DiTauDeltaR<2.5&&mjj<350", "category_selection"),
+                                                                              ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NjetsGt2_DeltaRLt2p5_MJJGt350_EtaJJLt4",    cuts=[("njets>=2&&DiTauDeltaR<2.5&&mjj>=350&&jdeta<4", "category_selection"),
+                                                                              ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NjetsGt2_DeltaRLt2p5_MJJGt350_EtaJJGt4",    cuts=[("njets>=2&&DiTauDeltaR<2.5&&mjj>=350&&jdeta>=4", "category_selection"),
+                                                                              ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NjetsLt2_DeltaRGt3p2_NjetsGt2_DeltaGt2p5",  cuts=[("(njets<2&&DiTauDeltaR>=3.2)||(njets>=2&&DiTauDeltaR>=2.5)", "category_selection"),
+                                                                              ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+]
+
+em_ML_categorization_sm = [
+            # Categorization targetting standard model processes.
+            (Selection(name="NJets0_DZetam35Tom10_PTHLt10",  cuts=[("njets==0&&pZetaPuppiMissVis>=-35&&pZetaPuppiMissVis<-10&&pt_tt_puppi<10", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJets0_DZetam35Tom10_PTHGt10",  cuts=[("njets==0&&pZetaPuppiMissVis>=-35&&pZetaPuppiMissVis<-10&&pt_tt_puppi>=10", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJets0_DZetamGtm10_PTHLt10",    cuts=[("njets==0&&pZetaPuppiMissVis>=-10&&pt_tt_puppi<10", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJets0_DZetamGtm10_PTHGt10",    cuts=[("njets==0&&pZetaPuppiMissVis>=-10&&pt_tt_puppi>=10", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJets1_PTHLt40",                cuts=[("njets==1&&pt_tt_puppi<40", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJets1_PTH40To120",             cuts=[("njets==1&&pt_tt_puppi>=40&&pt_tt_puppi<120", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJets1_PTH120To200",            cuts=[("njets==1&&pt_tt_puppi>=120&&pt_tt_puppi<200", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJets1_PTHGt200",               cuts=[("njets==1&&pt_tt_puppi>=200", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJetsGt2_MJJLt350",             cuts=[("njets>=2&&mjj<350", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
+            (Selection(name="NJetsGt2_MJJGt350",             cuts=[("njets>=2&&mjj>=350", "category_selection"),
+                                                                  ("pZetaPuppiMissVis>=-35", "signal_region_cut"),
+                                                                  ("nbtag==0&&{}<250".format(DNN1_var), "mssm_veto")]),
+                    [ML_preds_hist_sm]),
 ]
 
 lt_categorization = [
@@ -241,4 +357,18 @@ ML_categorization = {
     "mt": lt_ML_categorization,
     "tt": tt_ML_categorization,
     "em": em_ML_categorization,
+}
+
+categorization_sm = {
+    "et": lt_categorization_sm,
+    "mt": lt_categorization_sm,
+    "tt": tt_categorization_sm,
+    "em": em_categorization_sm,
+}
+
+ML_categorization_sm = {
+    "et": lt_ML_categorization_sm,
+    "mt": lt_ML_categorization_sm,
+    "tt": tt_ML_categorization_sm,
+    "em": em_ML_categorization_sm,
 }

@@ -612,6 +612,7 @@ m_vars = {
     "ml_mass" : "DNN_selected_NNs_FastSim_DeepTau_inclusive_1TeV_PuppiMET_with_METcov_j1j2jr_Nnu_Npu_NN_activation_softplus_batch_size_2048_mapesqrt_b_Adam_gu_inclusive_3_layers_1000_neurons.prediction",
     "m_sv_puppi" : "m_sv_puppi",
 }
+m_vars["ml_mass"] = "DNN1"
 
 m_vars_binning = [i for i in list(range(0, 501, 10))]
 

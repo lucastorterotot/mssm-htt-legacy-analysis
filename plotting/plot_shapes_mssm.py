@@ -387,6 +387,35 @@ def main(args):
             y_factor_linear = 1.25
             y_max = 0
             flatter_distribution = False
+            min_max_y_SM_NN = {
+                "tt" : {
+                    1 : [1e-3, 1e4],
+                    16: [1e-1, 1e5],
+                    20: [1e-2, 1e4]
+                },
+                "mt" : {
+                    1 : [1e-2, 1e4],
+                    13: [1e0, 1e4],
+                    15: [1e-2, 1e4],
+                    16: [1e0, 1e4],
+                    20: [1e1, 5e2]
+                },
+                "et" : {
+                    1 : [1e-1, 1e3],
+                    13: [1e-1, 1e3],
+                    15: [1e0, 1e3],
+                    16: [1e1, 1e3],
+                    20: [1e1, 5e2]
+                },
+                "em" : {
+                    1 : [1e-1, 1e3],
+                    13: [1e2, 1e2],
+                    14: [1e3, 1e1],
+                    16: [1e2, 1e2],
+                    19: [1e2, 5e1],
+                    20: [1e2, 1e3]
+                }
+            }
             if channel == "em" and int(category) == 13:
                 y_factor_linear = 1.5
             for hist in ["total_bkg", "data_obs"]:
@@ -403,13 +432,15 @@ def main(args):
                         plot.subplot(0).setYlims(1.e-3, max(2e3 * y_max, split_dict[channel] * 2))
                     else:
                         plot.subplot(0).setYlims(1.e-3, max(5e2 * y_max, split_dict[channel] * 2))
+                elif int(category) in min_max_y_SM_NN[channel]:
+                    plot.subplot(0).setYlims(min_max_y_SM_NN[channel][int(category)][0], max(min_max_y_SM_NN[channel][int(category)][1] * y_max, split_dict[channel] * 2))
                 else:
                     plot.subplot(0).setYlims(1.e-3, max(1e1 * y_max, split_dict[channel] * 2))
                 plot.subplot(0).setLogY()
                 
             width=.3
             plot.subplot(2).setYlims(1-width, 1+width)#(0.75, 1.8)
-            if args.model_independent:
+            if args.model_independent and not args.nosig:
                 if channel in ["et", "mt"] and int(category) in [32, 35]:
                     if 1+width < 2:
                         plot.subplot(2).setYlims(1-width, 2)

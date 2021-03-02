@@ -513,9 +513,57 @@ def main(info):
         raise Exception
 
     posChannelCategoryLabelLeft = None
+    cat = "inclusive"
+    print_yields = False
+    if "high_m_sv_puppi" in args.input:
+        cat = "high SVFIT mass"
+        print_yields = True
+    elif "high_ml_mass" in args.input:
+        cat = "high ml_mass"
+        print_yields = True
+    elif "high_mt_tot_puppi" in args.input:
+        cat = "high mTtot"
+        print_yields = True
+    elif "low_m_sv_puppi" in args.input:
+        cat = "low SVFIT mass"
+        print_yields = True
+    elif "low_ml_mass" in args.input:
+        cat = "low ml_mass"
+        print_yields = True
+    elif "low_mt_tot_puppi" in args.input:
+        cat = "low mTtot"
+        print_yields = True
     plot.DrawChannelCategoryLabel(
-        "%s, %s" % (channel_dict[channel], "inclusive"),
-        begin_left=posChannelCategoryLabelLeft)
+        "%s, %s" % (channel_dict[channel], cat),
+         begin_left=posChannelCategoryLabelLeft)
+
+    if print_yields and variable in ["puppimetphi"]:
+        x_pos = .65 if variable == "mt_tot_puppi" else .175
+        y_pos0= .45 if variable == "puppimetphi" else .55
+        import numpy as np
+        yields_texts = {}
+        for k in range(len(bkg_processes)):
+            process = bkg_processes[k]
+            yields_texts[process] = ROOT.TLatex()
+            yields_texts[process].SetNDC()
+            yields_texts[process].SetTextSize(0.02)
+            yields_texts[process].DrawLatex(
+                x_pos,
+                y_pos0+.025*k,
+                "{} = {}".format(
+                    styles.legend_label_dict[process.replace("TTL", "TT").replace("VVL", "VV").replace("NLO","")],
+                    np.round(plot.subplot(0)._hists[process][0].Integral(), 2)
+                )
+            )
+        process = "title"
+        yields_texts[process] = ROOT.TLatex()
+        yields_texts[process].SetNDC()
+        yields_texts[process].SetTextSize(0.02)
+        yields_texts[process].DrawLatex(
+            x_pos,
+            y_pos0+.025*len(bkg_processes),
+            "Integrals:"
+        )
 
     # save plot
     if not args.embedding and not args.fake_factor:

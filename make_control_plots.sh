@@ -8,11 +8,11 @@ if [[ ! -z $4 ]]
 then
     IFS="," read -a VARIABLES <<< $4
 else
-    VARIABLES=(pt_1 pt_2 eta_1 eta_2 m_sv_puppi m_vis jpt_1 jpt_2 jeta_1 jeta_2 dijetpt jdeta mjj bpt_1 bpt_2 mTdileptonMET_puppi mt_1_puppi mt_2_puppi pZetaPuppiMissVis ptvis pt_tt_puppi puppimet)
+    VARIABLES=(pt_1 pt_2 eta_1 eta_2 m_sv_puppi m_vis jpt_1 jpt_2 jeta_1 jeta_2 dijetpt jdeta mjj njets_red nbtag_red bpt_1 bpt_2 mTdileptonMET_puppi mt_1_puppi mt_2_puppi pZetaPuppiMissVis ptvis pt_tt_puppi puppimet)
 fi
 
 # Merge the shapes.
-# bash submit/merge_outputs.sh $ERA $CHANNEL $TAG 1
+bash submit/merge_outputs.sh $ERA $CHANNEL $TAG 1
 
 # Produce the different estimations.
 bash shapes/do_estimations.sh $ERA output/shapes/${ERA}-${CHANNEL}-control-shapes-${TAG}/shapes-control-${ERA}-${CHANNEL}.root 1

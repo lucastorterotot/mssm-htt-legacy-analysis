@@ -247,9 +247,6 @@ lt_categorization = [
             [mt_tot_hist]),
     (Selection(name="NbtagGt1_MT40To70",         cuts = [("nbtag>=1&&mt_1_puppi>=40&&mt_1_puppi<70", "category_selection")]),
             [mt_tot_hist]),
-    # Control region.
-    (Selection(name="MTGt70",                    cuts = [("mt_1_puppi>=70", "category_selection")]),
-            [mt_tot_hist]),
 ]
 
 tt_categorization = [
@@ -284,8 +281,25 @@ em_categorization = [
                     [mt_tot_hist]),
             (Selection(name="NbtagGt1_DZetaGt30",            cuts=[("nbtag>=1&&pZetaPuppiMissVis>=30", "category_selection")]),
                     [mt_tot_hist]),
+            # Additional MSSM analsis categories to test.
+            (Selection(name="Nbtag1_DZetam35Tom10",          cuts=[("nbtag==1&&pZetaPuppiMissVis>=-35&&pZetaPuppiMissVis<-10", "category_selection")]),
+                    [mt_tot_hist]),
+            (Selection(name="Nbtag1_DZetam10To30",           cuts=[("nbtag==1&&pZetaPuppiMissVis>=-10&&pZetaPuppiMissVis<30", "category_selection")]),
+                    [mt_tot_hist]),
+            (Selection(name="Nbtag1_DZetaGt30",              cuts=[("nbtag==1&&pZetaPuppiMissVis>=30", "category_selection")]),
+                    [mt_tot_hist]),
             # Control regions.
+            (Selection(name="inclusive",                     cuts=[("1==1", "category_selection")]),
+                    [mt_tot_hist]),
             (Selection(name="DZetaLtm35",                    cuts=[("pZetaPuppiMissVis<-35", "category_selection")]),
+                    [mt_tot_hist]),
+            (Selection(name="Nbtag0_DZetaLtm35",             cuts=[("nbtag==0&&pZetaPuppiMissVis<-35", "category_selection")]),
+                    [mt_tot_hist]),
+            (Selection(name="NbtagGt1_DZetaLtm35",           cuts=[("nbtag>=1&&pZetaPuppiMissVis<-35", "category_selection")]),
+                    [mt_tot_hist]),
+            (Selection(name="Nbtag0",                        cuts=[("nbtag==0", "category_selection")]),
+                    [mt_tot_hist]),
+            (Selection(name="NbtagGt1",                      cuts=[("nbtag>=1", "category_selection")]),
                     [mt_tot_hist]),
 ]
 

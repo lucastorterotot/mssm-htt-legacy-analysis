@@ -62,6 +62,28 @@ def triggerweight_emb(channel, era):
         weight = (ElMu, "triggerweight")
     return weight
 
+def fakemetweight_emb(channel, era):
+    weightmap = {
+        "2016": {
+            "et": "1.005",
+            "mt": "1.005",
+            "tt": "1.008",
+        },
+        "2017": {
+            "et": "1.005",
+            "mt": "1.005",
+            "tt": "1.010",
+        },
+        "2018": {
+            "et": "1.005",
+            "mt": "1.005",
+            "tt": "1.010",
+        },
+    }
+    weight = (weightmap[era][channel], "fakemetweight")
+    return weight
+
+
 
 def tau_by_iso_id_weight(channel):
     weight = ("1.0","taubyIsoIdWeight")
@@ -119,11 +141,15 @@ def lumi_weight(era):
 
 
 def MC_base_process_selection(channel, era):
+    if channel == "em":
+        isoweight = ("isoWeight_1*(isoWeight_2*(isoWeight_2<1000)+1.0*(isoWeight_2>=1000))","isoweight")
+    else:
+        isoweight = ("isoWeight_1*isoWeight_2","isoweight")
     MC_base_process_weights = [
         ("generatorWeight", "generatorWeight"),
         ("puweight", "puweight"),
         ("idWeight_1*idWeight_2","idweight"),
-        ("isoWeight_1*isoWeight_2","isoweight"),
+        isoweight,
         ("trackWeight_1*trackWeight_2","trackweight"),
         ("eleTauFakeRateWeight*muTauFakeRateWeight", "leptonTauFakeRateWeight"),
         triggerweight(channel, era),
@@ -177,16 +203,10 @@ def TT_process_selection(channel, era):
 
 def VV_process_selection(channel, era):
     VV_process_weights = MC_base_process_selection(channel, era).weights
-    if era in ["2017", "2018"]:
-        VV_process_weights.extend([
-                    ("numberGeneratedEventsWeight", "numberGeneratedEventsWeight"),
-                    ("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
-                ])
-    else:
-        VV_process_weights.extend([
-                    ("1.252790591041545e-07*(abs(crossSectionPerEventWeight - 118.7) < 0.01) + 5.029933132068942e-07*(abs(crossSectionPerEventWeight - 12.14) < 0.01) + 2.501519047441559e-07*(abs(crossSectionPerEventWeight - 22.82) < 0.01) + numberGeneratedEventsWeight*(abs(crossSectionPerEventWeight - 118.7) > 0.01 && abs(crossSectionPerEventWeight - 12.14) > 0.01 && abs(crossSectionPerEventWeight - 22.82) > 0.01)","numberGeneratedEventsWeight"),
-                    ("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
-                ])
+    VV_process_weights.extend([
+                ("numberGeneratedEventsWeight", "numberGeneratedEventsWeight"),
+                ("crossSectionPerEventWeight", "crossSectionPerEventWeight"),
+            ])
     return Selection(
             name = "VV",
             weights = VV_process_weights
@@ -340,25 +360,31 @@ def ZTT_embedded_process_selection(channel, era):
     if "mt" in channel:
         ztt_embedded_weights.extend([
             ("gen_match_1==4 && gen_match_2==5","emb_veto"),
+            ("pt_2/genMatchedLep2Pt < 1.5","high_fakemet_veto"),
             ("(pt_2<100)*embeddedDecayModeWeight+(pt_2>=100)", "decayMode_SF"),
             ("idWeight_1*isoWeight_1", "lepton_sf"),
             tau_by_iso_id_weight(channel),
             triggerweight_emb(channel, era),
+            fakemetweight_emb(channel, era),
             ])
     elif "et" in channel:
         ztt_embedded_weights.extend([
             ("gen_match_1==3 && gen_match_2==5","emb_veto"),
+            ("pt_2/genMatchedLep2Pt < 1.5","high_fakemet_veto"),
             ("(pt_2<100)*embeddedDecayModeWeight+(pt_2>=100)", "decayMode_SF"),
             ("idWeight_1*isoWeight_1", "lepton_sf"),
             tau_by_iso_id_weight(channel),
             triggerweight_emb(channel, era),
+            fakemetweight_emb(channel, era),
             ])
     elif "tt" in channel:
         ztt_embedded_weights.extend([
             ("(pt_1<100)*embeddedDecayModeWeight+(pt_1>=100)*(pt_2<100)*((decayMode_2==0)*0.975+(decayMode_2==1)*0.975*1.051+(decayMode_2==10)*0.975*0.975*0.975+(decayMode_2==11)*0.975*0.975*0.975*1.051)+(pt_2>=100)", "decayMode_SF"),
+            ("pt_1/genMatchedLep1Pt < 1.5 && pt_2/genMatchedLep2Pt < 1.5","high_fakemet_veto"),
             ("gen_match_1==5 && gen_match_2==5","emb_veto"),
             tau_by_iso_id_weight(channel),
             triggerweight_emb(channel, era),
+            fakemetweight_emb(channel, era),
             ])
     elif "em" in channel:
         ztt_embedded_weights.extend([
@@ -543,8 +569,14 @@ def ZH_process_selection(channel, era):
 
 
 def ttH_process_selection(channel, era):
+    if era in ["2016", "2017"]:
+        ttH_weights = HTT_process_selection(channel, era).weights
+    else:
+        ttH_weights = HTT_base_process_selection(channel, era).weights + [
+                ("4.569757345884934e-08", "numberGeneratedEventsWeight"),
+                ("crossSectionPerEventWeight", "crossSectionPerEventWeight")]
     return Selection(name = "ttH125",
-                     weights = HTT_process_selection(channel, era).weights)
+                     weights = ttH_weights)
 
 
 def ggHWW_process_selection(channel, era):
@@ -589,7 +621,7 @@ def ggh_stitching_weight(era):
                   "(htxs_stage1p1cat==106)*1.19e-8+"
                   "(htxs_stage1p1cat>=107&&htxs_stage1p1cat<=109)*4.91e-8+"
                   "(htxs_stage1p1cat>=110&&htxs_stage1p1cat<=113)*7.90e-9"
-                  ")","ggh_stitching_weight")
+                  ")*(abs(crossSectionPerEventWeight - 0.00538017) > 1e-5) + numberGeneratedEventsWeight*crossSectionPerEventWeight*(abs(crossSectionPerEventWeight - 0.00538017) < 1e-5)","ggh_stitching_weight")
     elif era == "2018":
         weight = ("(((htxs_stage1p1cat==100||htxs_stage1p1cat==102||htxs_stage1p1cat==103)*crossSectionPerEventWeight*numberGeneratedEventsWeight+"
                   "(htxs_stage1p1cat==101)*2.09e-8+"
